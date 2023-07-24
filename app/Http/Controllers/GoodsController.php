@@ -189,14 +189,57 @@ class GoodsController extends Controller
                 'goodDetail'=>'string|required|max:800',
                 'id'=>'required|integer'
             ]);
-            return $this->goodService->allGoodDetailSales($validatedData);
+            if(in_array($validatedData['goodDetail'],['brand','modal','category']))
+            {
+                return $this->goodService->allGoodDetailSales($validatedData);
+            }
+            return response()->json(["goodDetail"=>"The selected type is invalid"]);     
         } catch (ValidationException $e) {
             return response()->json([
                 'errors' => $e->errors(),
             ], $e->status);
         }   
     }
-
+    public function allTimeGoodDetailSales(Request $request)
+    {
+        try 
+        {
+            $validatedData = $request->validate([
+                'goodDetail'=>'string|required|max:800',
+                'id'=>'required|integer'
+            ]);
+            if(in_array($validatedData['goodDetail'],['brand','modal','category']))
+            {
+                return $this->goodService->allTimeGoodDetailSales($validatedData);
+            }
+            return response()->json(["goodDetail"=>"The selected type is invalid"]);     
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+            ], $e->status);
+        }   
+    }
+    public function allGoodDetailGrns(Request $request)
+    {
+        try 
+        {
+            $validatedData = $request->validate([
+                'from' => 'date|required',
+                'to' => 'date|required',
+                'goodDetail'=>'string|required|max:800',
+                'id'=>'required|integer'
+            ]);
+            if(in_array($validatedData['goodDetail'],['brand','modal','category']))
+            {
+                return $this->goodService->allGoodDetailGrns($validatedData);
+            }
+            return response()->json(["goodDetail"=>"The selected type is invalid"]);     
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+            ], $e->status);
+        }   
+    }
     public function allGrns(Request $request)
     {
         try 

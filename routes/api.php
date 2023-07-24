@@ -28,3 +28,6 @@ Route::post('grns',[GoodsController::class,'allGrns']);
 Route::post('profitLost',[GoodsController::class,'profitLost']);
 Route::post('allTimeSales',[GoodsController::class,'allTimeSales']);
 Route::post('allTimeGrns',[GoodsController::class,'allTimeGrns']);
+Route::post('allGoodDetailSales',[GoodsController::class,'allGoodDetailSales']);
+Route::post('allGoodDetailGrns',[GoodsController::class,'allGoodDetailGrns']);
+Route::post('allTimeGoodDetailSales',[GoodsController::class,'allTimeGoodDetailSales']);

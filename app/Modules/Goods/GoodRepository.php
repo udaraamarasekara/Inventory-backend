@@ -75,4 +75,18 @@ class GoodRepository implements GoodRepositoryInterface
         return $goods;  
     }
 
+    public function allGoodDetailDeals(array $ids,array $data)
+    {
+     $goods=[];   
+     foreach($ids as $id)
+     {
+      $goods[]=$this->getById($id);
+     }  
+     $goodsRow=collect($goods);
+     $fetchedGoods=  $goodsRow->filter(function($good) use ($data){
+      return $good[$data['goodDetail'].'_id']==$data['id'];
+     });
+     return  HelpingFunctions::paginate($fetchedGoods);
+    }
+
 }

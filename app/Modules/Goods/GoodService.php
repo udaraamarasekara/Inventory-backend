@@ -128,4 +128,22 @@ class GoodService
        return CommonResource::collection($this->goodRepository->allGoods($ids));
     }
 
+    public function allGoodDetailSales(array $data)
+    {       
+       $ids=$this->dealService->sales($data);
+       return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+    }
+
+    public function allTimeGoodDetailSales(array $data)
+    {       
+      $ids=$this->dealService->allTimeSales();
+      return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+    }
+
+    public function allGoodDetailGrns(array $data)
+    {       
+       $ids=$this->dealService->grns($data);
+       return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+    }
+
 }
