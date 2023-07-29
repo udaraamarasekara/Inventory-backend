@@ -57,4 +57,9 @@ class PromisedPaymentRepository implements PromisedPaymentRepositoryInterface
         $promisedPayment->delete();
       }
     }
+    public function getAllWithoutPaginate()
+    {
+        return PromisedPayment::all();
+    }
+    
 }

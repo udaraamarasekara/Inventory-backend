@@ -31,3 +31,5 @@ Route::post('allTimeGrns',[GoodsController::class,'allTimeGrns']);
 Route::post('allGoodDetailSales',[GoodsController::class,'allGoodDetailSales']);
 Route::post('allGoodDetailGrns',[GoodsController::class,'allGoodDetailGrns']);
 Route::post('allTimeGoodDetailSales',[GoodsController::class,'allTimeGoodDetailSales']);
+Route::post('allTimeGoodDetailGrns',[GoodsController::class,'allTimeGoodDetailGrns']);
+Route::post('mostProfitedGoodDetail',[GoodsController::class,'mostProfitedGoodDetail']);

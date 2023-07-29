@@ -19,4 +19,6 @@ interface PromisedPaymentRepositoryInterface
     
     public function updateByDealId(array $data);
 
+    public function getAllWithoutPaginate();
+
 }

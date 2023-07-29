@@ -219,6 +219,25 @@ class GoodsController extends Controller
             ], $e->status);
         }   
     }
+    public function allTimeGoodDetailGrns(Request $request)
+    {
+        try 
+        {
+            $validatedData = $request->validate([
+                'goodDetail'=>'string|required|max:800',
+                'id'=>'required|integer'
+            ]);
+            if(in_array($validatedData['goodDetail'],['brand','modal','category']))
+            {
+                return $this->goodService->allTimeGoodDetailGrns($validatedData);
+            }
+            return response()->json(["goodDetail"=>"The selected type is invalid"]);     
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+            ], $e->status);
+        }   
+    }
     public function allGoodDetailGrns(Request $request)
     {
         try 
@@ -254,6 +273,26 @@ class GoodsController extends Controller
                 'errors' => $e->errors(),
             ], $e->status);
         } 
+    }
+    public function mostProfitedGoodDetail(Request $request)
+    {
+        try 
+        {
+            $validatedData = $request->validate([
+                'from' => 'date|required',
+                'to' => 'date|required',
+                'goodDetail'=>'string|required|max:800',
+            ]);
+            if(in_array($validatedData['goodDetail'],['brand','modal','category']))
+            {
+                return $this->goodService->mostProfitedGoodDetail($validatedData);
+            }
+            return response()->json(["goodDetail"=>"The selected type is invalid"]);     
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+            ], $e->status);
+        }   
     }
     public function validateData(Request $request)
     {

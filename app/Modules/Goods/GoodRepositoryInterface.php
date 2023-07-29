@@ -20,4 +20,7 @@ interface GoodRepositoryInterface
     public function salesTotalCost(array $data);
 
     public function allGoodDetailDeals(array $ids,array $data);   
+
+    public function data(array $ids);   
+
 }

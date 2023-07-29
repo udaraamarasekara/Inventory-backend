@@ -99,4 +99,24 @@ class DealRepository implements DealRepositoryInterface
       return  Deal::where('deal_type','expend')->where('dealable_type','App\Models\Good')->get()->pluck('dealable_id')->toArray();   
     }
 
+    public function getAllWithoutPaginate()
+    {
+      return Deal::all();
+    }
+
+    public function getReleventDealsForGoods(array $dealIds)
+    {
+     $validDealIds=[]; 
+     foreach($dealIds as $dealId) 
+     {
+      $deal=$this->getById($dealId);
+      if($deal['dealable_type']=='App\Models\Good')
+      {
+        $validDealIds[]=$deal['dealable_id'];
+      }
+
+     }
+      return $validDealIds;
+    }
+    
 }

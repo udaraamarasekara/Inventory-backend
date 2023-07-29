@@ -73,4 +73,10 @@ class PromisedPaymentService
     {
         return $this->promisedPaymentRepository->updateByDealId($data);
     }
+
+    public function getAllWithoutPaginate()
+    {
+      return $this->promisedPaymentRepository->getAllWithoutPaginate();
+
+    }
 }

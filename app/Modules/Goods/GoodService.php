@@ -3,6 +3,7 @@
 namespace App\Modules\Goods;
 use App\Http\Resources\CommonResource;
 use App\Modules\Deals\DealService;
+use App\Modules\GoodDetails\GoodDetailService;
 use App\Modules\Goods\GoodRepositoryInterface;
 use App\Modules\PromisedPayments\PromisedPaymentService;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,9 @@ class GoodService
 {
 
     public function __construct(protected GoodRepositoryInterface $goodRepository,protected StockService $stockService,
-    protected DealService $dealService, protected PromisedPaymentService $promisedPaymentService)
+    protected DealService $dealService, protected PromisedPaymentService $promisedPaymentService,
+    protected GoodDetailService $goodDetailService
+    )
     {
     }
 
@@ -140,10 +143,57 @@ class GoodService
       return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
     }
 
+    public function allTimeGoodDetailGrns(array $data)
+    {       
+      $ids=$this->dealService->allTimeGrns();
+      return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+    }
+
+
     public function allGoodDetailGrns(array $data)
     {       
        $ids=$this->dealService->grns($data);
        return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+    }
+
+    public function mostProfitedGoodDetail(array $data)
+    {
+      $goodDetails=$this->goodDetailService->getAllWithoutPaginate($data['goodDetail']);
+      foreach($goodDetails as $goodDetail)
+      {
+        $goodDetail['expend']=0;
+        $goodDetail['income']=0;
+      }
+      dd($goodDetail);
+      $grnIds=$this->dealService->grns($data);
+      $grnData=$this->goodRepository->data($grnIds);
+      foreach($grnData as $dataRow)
+      {
+        foreach($goodDetails as $goodDetail)
+        {
+          if($goodDetail['id']==$dataRow[$data['goodDetail'].'_id'])
+          {
+            $goodDetail['expend']+=$dataRow['received_price_per_unit']*$dataRow['quantity'];
+          }
+        }
+      }
+
+      $saleIds=$this->dealService->sales($data);
+      $saleData=$this->goodRepository->data($saleIds);
+      foreach($saleData as $dataRow)
+      {
+        foreach($goodDetails as $goodDetail)
+        {
+          if($goodDetail['id']==$dataRow[$data['goodDetail'].'_id'])
+          {
+            $goodDetail['income']+=$dataRow['sale_price_per_unit']*$dataRow['quantity'];
+          }
+        }
+      }
+      $promisedPayments=$this->promisedPaymentService->getAllWithoutPaginate();
+      
+      $deals= $this->dealService->getReleventDealsForGoods($promisedPayments['deal_id']);
+
     }
 
 }

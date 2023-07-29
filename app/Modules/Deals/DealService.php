@@ -70,4 +70,15 @@ class DealService
     {
        return $this->dealRepository->allTimeGrns();
     }
+
+    public function getAllWithoutPaginate()
+    {
+       return $this->dealRepository->getAllWithoutPaginate();
+    }
+
+    public function getReleventDealsForGoods(array $dealIds)
+    {
+       return $this->dealRepository->getReleventDealsForGoods($dealIds);
+    }
+    
 }

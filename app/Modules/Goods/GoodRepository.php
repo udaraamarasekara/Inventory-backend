@@ -89,4 +89,14 @@ class GoodRepository implements GoodRepositoryInterface
      return  HelpingFunctions::paginate($fetchedGoods);
     }
 
+    public function data(array $ids)
+    {
+        $goods=[];   
+        foreach($ids as $id)
+        {
+         $goods[]=$this->getById($id);
+        }  
+         return collect($goods);
+    }
+
 }

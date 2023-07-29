@@ -75,6 +75,10 @@ class GoodDetailRepository implements GoodDetailRepositoryInterface
       return ['success'=>$type.' deleted'];
     }
 
-
+    public function getAllWithoutPaginate(string $type)
+    {
+      $this->defineModel($type);
+      return $this->model::all();
+    }
    
 }

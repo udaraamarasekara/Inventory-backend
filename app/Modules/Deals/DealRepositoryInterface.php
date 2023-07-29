@@ -29,5 +29,8 @@ interface DealRepositoryInterface
 
     public function allTimeGrns();
 
+    public function getAllWithoutPaginate();
+    
+    public function getReleventDealsForGoods(array $dealIds);
 
 }

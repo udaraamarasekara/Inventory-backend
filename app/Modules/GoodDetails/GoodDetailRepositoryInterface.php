@@ -15,4 +15,6 @@ interface GoodDetailRepositoryInterface
     
     public function delete(string $type,$id);
 
+    public function getAllWithoutPaginate(string $type);
+
 }

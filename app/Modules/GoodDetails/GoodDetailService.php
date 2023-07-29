@@ -36,4 +36,9 @@ class GoodDetailService
         return $this->goodDetailRepository->delete($type,$id);
     }
 
+    public function getAllWithoutPaginate(string $type)
+    {
+        return $this->goodDetailRepository->getAllWithoutPaginate($type);
+    }
+
 }
