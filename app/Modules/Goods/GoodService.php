@@ -163,8 +163,8 @@ class GoodService
       {
         $goodDetail['expend']=0;
         $goodDetail['income']=0;
+        $goodDetail['promisedPayments']=0;
       }
-      dd($goodDetail);
       $grnIds=$this->dealService->grns($data);
       $grnData=$this->goodRepository->data($grnIds);
       foreach($grnData as $dataRow)
@@ -191,8 +191,28 @@ class GoodService
         }
       }
       $promisedPayments=$this->promisedPaymentService->getAllWithoutPaginate();
-      
-      $deals= $this->dealService->getReleventDealsForGoods($promisedPayments['deal_id']);
+      $dealIds=[];
+      foreach($promisedPayments as $promisedPayment)
+      {
+       $dealIds[]= $promisedPayment['deal_id'];
+      }
+      $deals= $this->dealService->getReleventDealsForGoods($dealIds);
+      $goods=[];
+      foreach($deals as $deal)
+      {
+        $goods[]=$this->getById($deal);  
+      }
+      foreach($goods as $dataRow)
+      {
+        foreach($goodDetails as $goodDetail)
+        {
+          if($goodDetail['id']==$dataRow[$data['goodDetail'].'_id'])
+          {
+            $goodDetail['promisedPayments']+=$promisedPayments->where('deal_id',$deal)->first()->value('amount');
+          }
+        }
+      }
+     return CommonResource::collection($goodDetails);
 
     }
 

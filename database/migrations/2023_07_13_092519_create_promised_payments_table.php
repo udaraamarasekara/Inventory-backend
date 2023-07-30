@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('deal_id')->constrained();
             $table->decimal('amount', 8, 2);
-            $table->date('deadline');   
+            $table->date('deadline'); 
+            $table->date('payed_at')->nullable();     
             $table->timestamps();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
 
