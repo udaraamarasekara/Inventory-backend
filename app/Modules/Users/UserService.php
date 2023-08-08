@@ -101,19 +101,11 @@ class UserService
 
         if (auth()->attempt($data)) {
             $user= $this->userRepository->login($data['email']);
-            $user->createToken($user->id)->plainTextToken;
             return new CommonResource($user);
         } else {
             // Authentication failed
             return "Invalid Entry";
         }
         
-    }
-
-    public function logout()
-    {
-        auth()->user()->tokens()->delete();
-    }
-
-    
+    }   
 }

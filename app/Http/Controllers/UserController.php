@@ -18,16 +18,19 @@ class UserController extends Controller
   {
     $validated=$this->validateData($request);
     if($validated)
-      {
-         return $this->userService->login($request->all());
+      { 
+        $response=[]; 
+        $response['auth'] = $request->session()->regenerate();
+        $response['user'] = $this->userService->login($request->all());
+         return $response;
       }
           
       //
   }
 
-  public function logout()
+  public function logout(Request $request)
   {
-    return $this->userService->logout();
+    return $request->session()->invalidate();
   } 
 
   public function validateData(Request $request)
