@@ -22,6 +22,11 @@ class GoodsController extends Controller
         return  $this->goodService->getAll();
     }
 
+    public function goodsCount()
+    {
+        return  $this->goodService->goodsCount(); 
+    }
+
     /**
      * Show the form for creating a new resource.
      */

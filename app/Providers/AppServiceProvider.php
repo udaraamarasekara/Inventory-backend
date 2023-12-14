@@ -19,6 +19,8 @@ use App\Modules\Employees\EmployeeRepositoryInterface;
 use App\Modules\Employees\EmployeeRepository;
 use App\Modules\PromisedPayments\PromisedPaymentRepository;
 use App\Modules\PromisedPayments\PromisedPaymentRepositoryInterface;
+use App\Modules\BuiltInTasks\BuiltInTaskRepository;
+use App\Modules\BuiltInTasks\BuiltInTaskRepositoryInterface;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
      $this->app->bind(GoodRepositoryInterface::class,GoodRepository::class);
      $this->app->bind(StockRepositoryInterface::class,StockRepository::class);
      $this->app->bind(DealerRepositoryInterface::class,DealerRepository::class);
+     $this->app->bind(BuiltInTaskRepositoryInterface::class,BuiltInTaskRepository::class);
 
         
         //

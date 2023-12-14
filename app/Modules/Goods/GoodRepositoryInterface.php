@@ -21,6 +21,8 @@ interface GoodRepositoryInterface
 
     public function allGoodDetailDeals(array $ids,array $data);   
 
-    public function data(array $ids);   
+    public function data(array $ids);  
+    
+    public function goodsCount();
 
 }

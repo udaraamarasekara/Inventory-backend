@@ -4,11 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BuiltInTasks extends Model
+class BuiltInTask extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     protected $guarded=[];
-
 }

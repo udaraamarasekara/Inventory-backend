@@ -216,4 +216,9 @@ class GoodService
 
     }
 
+    public function goodsCount()
+    {
+      return $this->goodRepository->goodsCount();
+    }
+
 }

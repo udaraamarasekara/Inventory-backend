@@ -99,4 +99,9 @@ class GoodRepository implements GoodRepositoryInterface
          return collect($goods);
     }
 
+    public function goodsCount()
+    {
+       return Good::distinct()->count('item_code'); 
+    }
+
 }

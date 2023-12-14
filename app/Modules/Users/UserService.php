@@ -99,7 +99,9 @@ class UserService
     public function login(array $data)
     {
 
-        if (auth()->attempt($data)) {
+          $remember=$data['remember'];
+          unset($data['remember']);
+        if (auth()->attempt($data,$remember)) {
             $user= $this->userRepository->login($data['email']);
             return new CommonResource($user);
         } else {

@@ -94,7 +94,7 @@ class AdminController extends Controller
       {
           $validator= Validator::make($request->all(), [
           'email' => 'required|email|unique:users|max:800',
-          'password' => 'required|max:8|min:5|confirmed|unique:users',
+          'password' => 'required|max:18|min:5|confirmed|unique:users',
           'name'=>'required|max:40',
           'role'=>'required|max:20',
           'profession_id'=>'required|exists:professions,id|integer',
@@ -105,7 +105,7 @@ class AdminController extends Controller
         {
           $validator= Validator::make($request->all(), [
             'email' => 'required|email|unique:users|max:800',
-            'password' => 'required|max:8|min:5|confirmed|unique:users',
+            'password' => 'required|max:18|min:5|confirmed|unique:users',
             'name'=>'required|max:40',
             'role'=>'required|max:20',
             'description'=>'required|max:800|string',
