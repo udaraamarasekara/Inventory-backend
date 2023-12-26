@@ -25,4 +25,6 @@ interface GoodRepositoryInterface
     
     public function goodsCount();
 
+    public function searchGood($input);
+
 }

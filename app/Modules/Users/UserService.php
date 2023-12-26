@@ -3,6 +3,8 @@
 namespace App\Modules\Users;
 use App\Http\Resources\CommonResource;
 use App\Modules\Employees\EmployeeService;
+use App\Modules\GoodDetails\GoodDetailService;
+use App\Modules\Goods\GoodService;
 use App\Modules\Users\UserRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Dealers\DealerService;
@@ -10,7 +12,7 @@ use App\Modules\Dealers\DealerService;
 class UserService 
 {
 
-    public function __construct(protected UserRepositoryInterface $userRepository,protected EmployeeService $employeeService,protected DealerService $dealerService)
+    public function __construct(protected UserRepositoryInterface $userRepository,protected EmployeeService $employeeService,protected DealerService $dealerService,protected GoodService $goodService,protected GoodDetailService $goodDetailService)
     {
     }
 
@@ -98,16 +100,32 @@ class UserService
 
     public function login(array $data)
     {
-
           $remember=$data['remember'];
           unset($data['remember']);
         if (auth()->attempt($data,$remember)) {
-            $user= $this->userRepository->login($data['email']);
-            return new CommonResource($user);
+            
+            return new CommonResource(auth()->user());
         } else {
             // Authentication failed
             return "Invalid Entry";
         }
         
     }   
+
+    public function searchAll($input)
+    {
+       $userSuggessions=$this->userRepository->searchUser($input); 
+       $userSuggessions->map(function($userSuggession)  
+       {
+        $userSuggession['table']='user'; 
+       });
+       $goodSuggessions=$this->goodService->searchGood($input); 
+       $goodSuggessions->map(function($goodSuggession)  
+       {
+        $goodSuggession['table']='good'; 
+       });
+       $goodDetailSuggessions=$this->goodDetailService->searchGoodDetail($input);
+       $fnl= collect($userSuggessions->merge($goodSuggessions))->merge($goodDetailSuggessions);
+       return $fnl;
+    }
 }

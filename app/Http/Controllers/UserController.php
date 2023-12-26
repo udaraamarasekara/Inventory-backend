@@ -30,6 +30,11 @@ class UserController extends Controller
       //
   }
 
+  public function searchAll(String $inputText)
+  {
+    return $this->userService->searchAll($inputText);  
+  }
+
   public function logout(Request $request)
   {
     return $request->session()->invalidate();

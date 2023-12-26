@@ -17,4 +17,10 @@ interface GoodDetailRepositoryInterface
 
     public function getAllWithoutPaginate(string $type);
 
+    public function searchBrands($input);
+
+    public function searchModals($input);
+
+    public function searchCategories($input);
+
 }

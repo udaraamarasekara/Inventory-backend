@@ -19,7 +19,6 @@ use App\Http\Controllers\UserController;
 Route::middleware('auth:sanctum')->group( function () {
     Route::apiResource('good',GoodsController::class);
     Route::get('goodsCount',[GoodsController::class,'goodsCount']);
-    Route::apiResource('admin',AdminController::class);
     Route::apiResource('builtInTask',BuiltInTaskController::class);
     Route::post('goodDetail/{type}',[GoodsController::class,'addGoodDetail']);
     Route::get('goodDetails/{type}',[GoodsController::class,'viewGoodDetails']);
@@ -36,8 +35,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('allTimeGoodDetailGrns',[GoodsController::class,'allTimeGoodDetailGrns']);
     Route::post('mostProfitedGoodDetail',[GoodsController::class,'mostProfitedGoodDetail']);
     Route::post('logout',[UserController::class,'logout']);
-
+    Route::get('searchAll/{inputText}',[UserController::class,'searchAll']);
 });
-
-Route::post('login',[UserController::class,'login']);
 Route::get('/',[UserController::class,'invalidRequest'])->name('error');
+Route::post('login',[UserController::class,'login']);

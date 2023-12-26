@@ -16,4 +16,6 @@ interface UserRepositoryInterface
     public function delete($id);
 
     public function login($email);
+
+    public function searchUser($input);
 }

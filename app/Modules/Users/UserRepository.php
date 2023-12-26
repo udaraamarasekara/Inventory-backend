@@ -41,4 +41,13 @@ class UserRepository implements UserRepositoryInterface
     {
      return  User::where('email',$email)->get();
     }
+
+    public function searchUser($input)
+    {
+      return  User::select( "id","name","email")
+        ->where('name', 'LIKE', '%' .$input. '%')
+        ->orWhere('email', 'LIKE', '%' .$input. '%')
+        ->orWhere('role', 'LIKE', '%' .$input. '%')
+        ->get();
+    }
 }

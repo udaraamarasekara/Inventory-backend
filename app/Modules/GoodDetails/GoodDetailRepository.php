@@ -80,5 +80,30 @@ class GoodDetailRepository implements GoodDetailRepositoryInterface
       $this->defineModel($type);
       return $this->model::all();
     }
+
+    public function searchBrands($input)
+    {
+      return  Brand::select("id","name","description")
+      ->where('name', 'LIKE', '%' .$input. '%')
+      ->orWhere('description', 'LIKE', '%' .$input. '%')
+      ->get();
+    }
+
+    public function searchModals($input)
+    {
+      return  Modal::select("id","name","description")
+      ->where('name', 'LIKE', '%' .$input. '%')
+      ->orWhere('description', 'LIKE', '%' .$input. '%')
+      ->get();
+    }
+    
+
+    public function searchCategories($input)
+    {
+      return  Category::select("id","name","description")
+      ->where('name', 'LIKE', '%' .$input. '%')
+      ->orWhere('description', 'LIKE', '%' .$input. '%')
+      ->get();
+    }
    
 }

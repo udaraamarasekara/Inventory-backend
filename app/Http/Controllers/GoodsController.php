@@ -312,13 +312,12 @@ class GoodsController extends Controller
         'deal_type'=>'required',
         'received_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         'sale_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
-        'expired_date'=>'required|date',
+        'expired_date'=>'required|date_format:Y-m-d|date',
         'unit'=>'required|string|max:20',
-        'regularDealer'=>'nullable|exists:regularDealers,id|integer',
         'quantity'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         'amount'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         'promised_amount'=>'nullable|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
-        'promised_deadline'=>'nullable|date'
+        'promised_deadline'=>'nullable|date|date_format:Y-m-d'
 
         ]);
     }

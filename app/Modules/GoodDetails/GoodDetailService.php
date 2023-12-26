@@ -40,5 +40,27 @@ class GoodDetailService
     {
         return $this->goodDetailRepository->getAllWithoutPaginate($type);
     }
+    
+    public function searchgoodDetail($input)
+    {
+      $brands= CommonResource::collection($this->goodDetailRepository->searchBrands($input));  
+      $brands->map(function($brand)  
+      {
+       $brand['table']='brand'; 
+      });
+      $modals=CommonResource::collection( $this->goodDetailRepository->searchModals($input));  
+      $modals->map(function($modal)  
+      {
+       $modal['table']='modal'; 
+      });
+      $categories= CommonResource::collection($this->goodDetailRepository->searchCategories($input));  
+      $categories->map(function($category)  
+      {
+       $category['table']='category'; 
+      });
+      $fnl = collect($brands->merge($modals))->merge($categories);
+      return $fnl;
+    //   return ['brands'=>$brands,'modals'=>$modals,'categories'=>$categories];
 
+    }
 }

@@ -104,4 +104,18 @@ class GoodRepository implements GoodRepositoryInterface
        return Good::distinct()->count('item_code'); 
     }
 
+
+    public function searchGood($input)
+    {
+       
+      return  Good::select("item_code","unit","description","expired_date","received_price_per_unit","sale_price_per_unit")
+      ->where('item_code', 'LIKE', '%' .$input. '%')
+      ->orWhere('unit', 'LIKE', '%' .$input. '%')
+      ->orWhere('description', 'LIKE', '%' .$input. '%')
+      ->orWhere('received_price_per_unit', 'LIKE', '%' .$input. '%')
+      ->orWhere('expired_date', 'LIKE', '%' .$input. '%')
+      ->orWhere('sale_price_per_unit', 'LIKE', '%' .$input. '%')
+      ->get();
+    }
+
 }
