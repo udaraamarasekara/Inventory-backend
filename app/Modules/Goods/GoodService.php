@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Modules\Goods;
-use App\Http\Resources\CommonResource;
+use App\Http\Resources\GoodResource;
 use App\Modules\Deals\DealService;
 use App\Modules\GoodDetails\GoodDetailService;
 use App\Modules\Goods\GoodRepositoryInterface;
@@ -21,12 +21,12 @@ class GoodService
 
     public function getAll()
     {
-        return CommonResource::collection($this->goodRepository->getAll());
+        return GoodResource::collection($this->goodRepository->getAll());
     }
 
     public function getById($id)
     {
-        return new CommonResource($this->goodRepository->getById($id));
+        return new GoodResource($this->goodRepository->getById($id));
     }
 
     public function create(array $data)
@@ -34,7 +34,7 @@ class GoodService
          try
          {
             DB::beginTransaction();
-            $good=   new CommonResource( $this->goodRepository->create($data)); 
+            $good=   new GoodResource( $this->goodRepository->create($data)); 
             if($data['deal_type']=='income')
             {
               $this->stockService->decrement($good['item_code'],$good['quantity']);
@@ -70,7 +70,7 @@ class GoodService
             if($this->goodRepository->getById($id))
             {
               $quantityToRemove=$this->goodRepository->getById($id)['quantity'];      
-              $good=  new CommonResource($this->goodRepository->update($id,$data));  
+              $good=  new GoodResource($this->goodRepository->update($id,$data));  
               $dealId= $this->dealService->udateByDealableId($id,$data['amount']);
               $this->stockService->update($good['item_code'],$good['quantity'],$quantityToRemove);
               if(isset($data['promised_amount']) && isset($data['promised_deadline']))
@@ -103,57 +103,57 @@ class GoodService
     public function allSales(array $data)
     {
         $ids=$this->dealService->sales($data);
-        return CommonResource::collection($this->goodRepository->allGoods($ids));
+        return GoodResource::collection($this->goodRepository->allGoods($ids));
     }
 
     public function allGrns(array $data)
     {
         $ids=$this->dealService->grns($data);
-        return CommonResource::collection($this->goodRepository->allGoods($ids));
+        return GoodResource::collection($this->goodRepository->allGoods($ids));
     }
     public function calProfitLost(array $data)
     {
         $ids=$this->dealService->sales($data);
         $income=$this->dealService->salesIncome($data);
         $cost=$this->goodRepository->salesTotalCost($ids);
-        return new CommonResource(['income'=>$income,'cost'=>$cost,'profit_or_lost'=>$income-$cost]);
+        return new GoodResource(['income'=>$income,'cost'=>$cost,'profit_or_lost'=>$income-$cost]);
     }
 
     public function allTimeSales()
     {
        $ids=$this->dealService->allTimeSales();
-       return CommonResource::collection($this->goodRepository->allGoods($ids));
+       return GoodResource::collection($this->goodRepository->allGoods($ids));
     }
 
     public function allTimeGrns()
     {
        $ids=$this->dealService->allTimeGrns();
-       return CommonResource::collection($this->goodRepository->allGoods($ids));
+       return GoodResource::collection($this->goodRepository->allGoods($ids));
     }
 
     public function allGoodDetailSales(array $data)
     {       
        $ids=$this->dealService->sales($data);
-       return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+       return GoodResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
     }
 
     public function allTimeGoodDetailSales(array $data)
     {       
       $ids=$this->dealService->allTimeSales();
-      return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+      return GoodResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
     }
 
     public function allTimeGoodDetailGrns(array $data)
     {       
       $ids=$this->dealService->allTimeGrns();
-      return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+      return GoodResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
     }
 
 
     public function allGoodDetailGrns(array $data)
     {       
        $ids=$this->dealService->grns($data);
-       return CommonResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
+       return GoodResource::collection($this->goodRepository->allGoodDetailDeals($ids,$data));
     }
 
     public function mostProfitedGoodDetail(array $data)
@@ -212,7 +212,7 @@ class GoodService
           }
         }
       }
-     return CommonResource::collection($goodDetails);
+     return GoodResource::collection($goodDetails);
 
     }
 

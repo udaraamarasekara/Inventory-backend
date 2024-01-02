@@ -23,7 +23,12 @@ class Good extends Model
     ];
 
     public function brand(){
-      return  $this->hasOne(Brand::class);
+      return  $this->belongsTo(Brand::class);
     }
-
+    public function modal(){
+      return  $this->belongsTo(Modal::class);
+    }
+    public function category(){
+      return  $this->belongsTo(Category::class);
+    }
 }

@@ -22,7 +22,5 @@ class HelpingFunctions
         return $paginator;
         
     }
-
-  
 }
 

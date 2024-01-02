@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreignId('brand_id')->constrained();
             $table->foreignId('modal_id')->constrained();
             $table->unsignedBigInteger('dealer_id')->nullable();
-            $table->foreign('dealer_id')->references('id')->on('dealers')->onDelete('cascade');
             $table->date('expired_date');
             $table->decimal('received_price_per_unit', 8, 2);
             $table->integer('quantity');

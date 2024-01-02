@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Modules\Users;
-use App\Http\Resources\CommonResource;
+use App\Http\Resources\UserResource;
 use App\Modules\Employees\EmployeeService;
 use App\Modules\GoodDetails\GoodDetailService;
 use App\Modules\Goods\GoodService;
@@ -18,7 +18,7 @@ class UserService
 
     public function getAll()
     {
-        return CommonResource::collection($this->userRepository->getAll());
+        return UserResource::collection($this->userRepository->getAll());
     }
 
     public function delete($id)
@@ -48,7 +48,7 @@ class UserService
 
     public function getById($id)
     {
-        return $this->userRepository->getById($id);
+        return new UserResource($this->userRepository->getById($id));
     }
     
     public function create(array $data)
@@ -56,7 +56,7 @@ class UserService
         try
         {
             DB::beginTransaction();
-            $user= new CommonResource($this->userRepository->create($data));
+            $user= new UserResource($this->userRepository->create($data));
             $data['user_id']=$user['id']; 
             if($data['role']=='employee')
             {
@@ -81,7 +81,7 @@ class UserService
         try
         {
             DB::beginTransaction();
-            $user= new CommonResource($this->userRepository->update($id,$data));
+            $user= new UserResource($this->userRepository->update($id,$data));
             if($data['role']=='employee')
             {
              $this->employeeService->UpdateByUserId($id,$data); 
@@ -104,7 +104,7 @@ class UserService
           unset($data['remember']);
         if (auth()->attempt($data,$remember)) {
             
-            return new CommonResource(auth()->user());
+            return new UserResource(auth()->user());
         } else {
             // Authentication failed
             return "Invalid Entry";

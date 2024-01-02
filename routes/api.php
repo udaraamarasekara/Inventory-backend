@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BuiltInTasksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,8 +19,9 @@ use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::apiResource('good',GoodsController::class);
+    Route::apiResource('admin',AdminController::class);
     Route::get('goodsCount',[GoodsController::class,'goodsCount']);
-    Route::apiResource('builtInTask',BuiltInTaskController::class);
+    Route::apiResource('builtInTask',BuiltInTasksController::class);
     Route::post('goodDetail/{type}',[GoodsController::class,'addGoodDetail']);
     Route::get('goodDetails/{type}',[GoodsController::class,'viewGoodDetails']);
     Route::delete('goodDetail/{type}/{id}',[GoodsController::class,'deleteGoodDetail']);
@@ -36,6 +38,9 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('mostProfitedGoodDetail',[GoodsController::class,'mostProfitedGoodDetail']);
     Route::post('logout',[UserController::class,'logout']);
     Route::get('searchAll/{inputText}',[UserController::class,'searchAll']);
+    Route::get('singleItem/{table}/{id}',[UserController::class,'singleItem']);
+
 });
 Route::get('/',[UserController::class,'invalidRequest'])->name('error');
 Route::post('login',[UserController::class,'login']);
+   

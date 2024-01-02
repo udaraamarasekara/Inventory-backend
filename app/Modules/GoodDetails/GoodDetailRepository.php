@@ -83,7 +83,7 @@ class GoodDetailRepository implements GoodDetailRepositoryInterface
 
     public function searchBrands($input)
     {
-      return  Brand::select("id","name","description")
+      return  Brand::select("id","name")
       ->where('name', 'LIKE', '%' .$input. '%')
       ->orWhere('description', 'LIKE', '%' .$input. '%')
       ->get();
@@ -91,7 +91,7 @@ class GoodDetailRepository implements GoodDetailRepositoryInterface
 
     public function searchModals($input)
     {
-      return  Modal::select("id","name","description")
+      return  Modal::select("id","name")
       ->where('name', 'LIKE', '%' .$input. '%')
       ->orWhere('description', 'LIKE', '%' .$input. '%')
       ->get();
@@ -100,7 +100,7 @@ class GoodDetailRepository implements GoodDetailRepositoryInterface
 
     public function searchCategories($input)
     {
-      return  Category::select("id","name","description")
+      return  Category::select("id","name")
       ->where('name', 'LIKE', '%' .$input. '%')
       ->orWhere('description', 'LIKE', '%' .$input. '%')
       ->get();

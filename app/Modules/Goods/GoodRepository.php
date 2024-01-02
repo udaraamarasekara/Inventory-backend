@@ -108,7 +108,7 @@ class GoodRepository implements GoodRepositoryInterface
     public function searchGood($input)
     {
        
-      return  Good::select("item_code","unit","description","expired_date","received_price_per_unit","sale_price_per_unit")
+      return  Good::select(["item_code","id"])
       ->where('item_code', 'LIKE', '%' .$input. '%')
       ->orWhere('unit', 'LIKE', '%' .$input. '%')
       ->orWhere('description', 'LIKE', '%' .$input. '%')

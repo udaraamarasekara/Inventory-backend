@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Modules\GoodDetails\GoodDetailService;
+use App\Modules\Goods\GoodService;
 use App\Modules\Users\UserService;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 use Illuminate\Http\Request;
@@ -11,7 +14,7 @@ class UserController extends Controller
    /**
     * Display a listing of the resource.
     */
-   public function __construct(protected UserService $userService)
+   public function __construct(protected UserService $userService,protected GoodService $goodService,protected GoodDetailService $goodDetailService)
    {
    }
   public function login(Request $request)
@@ -52,6 +55,37 @@ class UserController extends Controller
       'password' => 'required|max:18|min:5',
       'remember'=>'boolean'
       ]);
+  }
+
+  public function singleItem(String $table,String $id)
+  {
+    if($table=='user')
+    {
+      try{
+      return $this->userService->getById($id);
+      }catch(Exception $e)
+      {
+       return 'No such item'; 
+      }
+    }
+    else if($table=='good')
+    {
+       $result= $this->goodService->getById($id);
+       if($result)
+       {
+        $result['name']=$result['item_code'];
+        unset($result['item_code']);
+       }
+
+       return $result;
+
+    }
+    else if($table=='brand'|| $table=='category'|| $table=='modal' )
+    {
+      
+       $result=  $this->goodDetailService->getById($table,$id);
+    }
+
   }
 
 }
