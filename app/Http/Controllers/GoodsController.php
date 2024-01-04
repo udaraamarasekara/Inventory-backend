@@ -30,9 +30,9 @@ class GoodsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function productTransactionCount()
     {
-        //
+        return $this->goodService->productTransactionCount();
     }
 
     /**
@@ -309,7 +309,8 @@ class GoodsController extends Controller
         'category_id'=>'required|exists:categories,id|integer',
         'dealable_type'=>'required|string',
         'dealable_id'=>'required|integer',
-        'deal_type'=>'required',
+        'deal_type'=>'required|in:1,2',
+        'dealer_id'=>'nullable|exists:dealers,id|integer',
         'received_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         'sale_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         'expired_date'=>'required|date_format:Y-m-d|date',

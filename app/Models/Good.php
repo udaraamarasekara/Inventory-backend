@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Good extends Model
 {
@@ -19,7 +20,8 @@ class Good extends Model
         "sale_price_per_unit",
         "expired_date",
         "unit",
-        "quantity"
+        "quantity",
+        "dealer_id"
     ];
 
     public function brand(){
@@ -30,5 +32,13 @@ class Good extends Model
     }
     public function category(){
       return  $this->belongsTo(Category::class);
+    }
+
+    public function deal(){
+      return $this->morphOne(Deal::class, 'dealable');
+    }
+
+    public function dealer(){
+      return $this->belongsTo(Dealer::class);
     }
 }

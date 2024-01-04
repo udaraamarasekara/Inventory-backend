@@ -5,7 +5,9 @@ namespace App\Modules\Goods;
 use App\Models\Good;
 use App\Modules\Goods\GoodRepositoryInterface;
 use App\Modules\Utilities\HelpingFunctions;
+use App\Models\Deal;
 
+use DB;
 class GoodRepository implements GoodRepositoryInterface
 {
     public function getAll()
@@ -104,6 +106,21 @@ class GoodRepository implements GoodRepositoryInterface
        return Good::distinct()->count('item_code'); 
     }
 
+    public function productTransactionCount()
+    {
+        
+    return  ['spend_for_buy_products'=> Good::whereRelation('deal','deal_type','income')->sum(DB::raw(
+        'received_price_per_unit * quantity')
+    ),
+    'received_from_sale_products'=> Good::whereRelation('deal','deal_type','expend')->sum(DB::raw(
+        'sale_price_per_unit * quantity')
+    ),
+    'promised_to_receive'=> Deal::where('deal_type','income')->whereRelation('promisedPayment','payed_at',null)->get()->map(function($deal){return $deal->promisedPayment;})->sum('amount'),
+    'promised_to_pay'=> Deal::where('deal_type','expend')->whereRelation('promisedPayment' ,'payed_at',null)->get()->map(function($deal){return $deal->promisedPayment;})->sum('amount')
+
+    ];
+
+    }
 
     public function searchGood($input)
     {

@@ -39,6 +39,8 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('logout',[UserController::class,'logout']);
     Route::get('searchAll/{inputText}',[UserController::class,'searchAll']);
     Route::get('singleItem/{table}/{id}',[UserController::class,'singleItem']);
+    Route::get('productTransactionCount',[GoodsController::class,'productTransactionCount']);
+    Route::get('test',(function(){return true;}));
 
 });
 Route::get('/',[UserController::class,'invalidRequest'])->name('error');

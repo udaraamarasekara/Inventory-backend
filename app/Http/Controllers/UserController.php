@@ -40,6 +40,8 @@ class UserController extends Controller
 
   public function logout(Request $request)
   {
+    Auth::guard('web')->logout();
+    $request->session()->regenerateToken();
     return $request->session()->invalidate();
   } 
 

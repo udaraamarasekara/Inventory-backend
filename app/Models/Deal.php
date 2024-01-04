@@ -17,4 +17,9 @@ class Deal extends Model
       return $this->morphTo();  
     }
 
+    public function promisedPayment()
+    {
+      return $this->hasOne(PromisedPayment::class);
+    }  
+
 }

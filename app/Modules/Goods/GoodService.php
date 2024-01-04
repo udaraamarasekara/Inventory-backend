@@ -226,4 +226,9 @@ class GoodService
       return $this->goodRepository->searchGood($input);
     }
 
+    public function productTransactionCount()
+    {
+      return $this->goodRepository->productTransactionCount();
+    }
+
 }
