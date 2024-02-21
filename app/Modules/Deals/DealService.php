@@ -46,6 +46,11 @@ class DealService
        return $this->dealRepository->grns($data);
     }
 
+    public function goods(array $data)
+    {
+       return $this->dealRepository->goods($data);
+    }
+
     public function salesIncome(array $data)
     {
        return $this->dealRepository->salesIncome($data);
@@ -79,6 +84,11 @@ class DealService
     public function getReleventDealsForGoods(array $dealIds)
     {
        return $this->dealRepository->getReleventDealsForGoods($dealIds);
+    }
+
+    public function getDealGroupId()
+    {
+      return $this->dealRepository->getDealGroupId()+1;
     }
     
 }

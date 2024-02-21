@@ -17,6 +17,8 @@ interface DealRepositoryInterface
 
     public function sales(array $data);
 
+    public function goods(array $data);
+
     public function salesIncome(array $data);
     
     public function udateByDealableId($id,string $data);
@@ -32,5 +34,8 @@ interface DealRepositoryInterface
     public function getAllWithoutPaginate();
     
     public function getReleventDealsForGoods(array $dealIds);
+
+    public function getDealGroupId();
+
 
 }

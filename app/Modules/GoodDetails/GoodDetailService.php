@@ -23,7 +23,7 @@ class GoodDetailService
 
     public function create(string $type,array $data)
     {  
-        return  new CommonResource( $this->goodDetailRepository->create($type,$data));    
+        return  $this->goodDetailRepository->create($type,$data);    
     }
 
     public function update(string $type,$id,array $data)
@@ -62,5 +62,32 @@ class GoodDetailService
       return $fnl;
     //   return ['brands'=>$brands,'modals'=>$modals,'categories'=>$categories];
 
+    }
+
+    public function searchSpecificGoodDetail($type,$inputText)
+    {
+      if($type=='brand')
+      {
+       return CommonResource::collection($this->goodDetailRepository->searchBrands($inputText));  
+      }
+      else if($type=='modal')
+      {
+        return CommonResource::collection($this->goodDetailRepository->searchModals($inputText));  
+
+      }
+      else if($type=='category')
+      {
+        return CommonResource::collection($this->goodDetailRepository->searchCategories($inputText));  
+
+      }
+    }
+
+    public function getRelevantGoodDetailIds(array $data)
+    {
+      $ids=[];
+      $ids['brand_id']= $this->goodDetailRepository->getBrand($data['brand'])?->id;
+      $ids['modal_id']= $this->goodDetailRepository->getModal($data['modal'])?->id;
+      $ids['category_id']=$this->goodDetailRepository->getCategory($data['category'])?->id;
+      return $ids;
     }
 }

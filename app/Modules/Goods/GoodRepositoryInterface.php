@@ -15,7 +15,7 @@ interface GoodRepositoryInterface
     
     public function delete($id);
 
-    public function allGoods(array $data);
+    public function allGoods(array $data,int $page);
    
     public function salesTotalCost(array $data);
 
@@ -28,5 +28,6 @@ interface GoodRepositoryInterface
     public function productTransactionCount();
 
     public function searchGood($input);
+
 
 }

@@ -18,28 +18,32 @@ use App\Http\Controllers\BuiltInTasksController;
 */
 
 Route::middleware('auth:sanctum')->group( function () {
-    Route::apiResource('good',GoodsController::class);
+    Route::apiResource('good',GoodsController::class)->except(['store']);
     Route::apiResource('admin',AdminController::class);
     Route::get('goodsCount',[GoodsController::class,'goodsCount']);
+    Route::post('newSale',[GoodsController::class,'newSale']);
+    Route::post('newGrn',[GoodsController::class,'newGrn']);
+    Route::get('allGoodsWithinPeriod',[GoodsController::class,'getAllWithinPeriod']);
     Route::apiResource('builtInTask',BuiltInTasksController::class);
     Route::post('goodDetail/{type}',[GoodsController::class,'addGoodDetail']);
     Route::get('goodDetails/{type}',[GoodsController::class,'viewGoodDetails']);
     Route::delete('goodDetail/{type}/{id}',[GoodsController::class,'deleteGoodDetail']);
     Route::put('goodDetail/{type}/{id}',[GoodsController::class,'updateGoodDetail']);
-    Route::post('sales',[GoodsController::class,'allSales']);
-    Route::post('grns',[GoodsController::class,'allGrns']);
-    Route::post('profitLost',[GoodsController::class,'profitLost']);
-    Route::post('allTimeSales',[GoodsController::class,'allTimeSales']);
-    Route::post('allTimeGrns',[GoodsController::class,'allTimeGrns']);
-    Route::post('allGoodDetailSales',[GoodsController::class,'allGoodDetailSales']);
-    Route::post('allGoodDetailGrns',[GoodsController::class,'allGoodDetailGrns']);
-    Route::post('allTimeGoodDetailSales',[GoodsController::class,'allTimeGoodDetailSales']);
-    Route::post('allTimeGoodDetailGrns',[GoodsController::class,'allTimeGoodDetailGrns']);
-    Route::post('mostProfitedGoodDetail',[GoodsController::class,'mostProfitedGoodDetail']);
-    Route::post('logout',[UserController::class,'logout']);
+    Route::get('sales',[GoodsController::class,'allSales']);
+    Route::get('grns',[GoodsController::class,'allGrns']);
+    Route::get('profitLost',[GoodsController::class,'profitLost']);
+    Route::get('allTimeSales',[GoodsController::class,'allTimeSales']);
+    Route::get('allTimeGrns',[GoodsController::class,'allTimeGrns']);
+    Route::get('allGoodDetailSales',[GoodsController::class,'allGoodDetailSales']);
+    Route::get('allGoodDetailGrns',[GoodsController::class,'allGoodDetailGrns']);
+    Route::get('allTimeGoodDetailSales',[GoodsController::class,'allTimeGoodDetailSales']);
+    Route::get('allTimeGoodDetailGrns',[GoodsController::class,'allTimeGoodDetailGrns']);
+    Route::get('mostProfitedGoodDetail',[GoodsController::class,'mostProfitedGoodDetail']);
+    Route::get('logout',[UserController::class,'logout']);
     Route::get('searchAll/{inputText}',[UserController::class,'searchAll']);
     Route::get('singleItem/{table}/{id}',[UserController::class,'singleItem']);
     Route::get('productTransactionCount',[GoodsController::class,'productTransactionCount']);
+    Route::get('newGoodSearch/{type}/{inputText}',[GoodsController::class,'newGoodSearch']);
     Route::get('test',(function(){return true;}));
 
 });

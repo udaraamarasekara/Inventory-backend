@@ -105,5 +105,15 @@ class GoodDetailRepository implements GoodDetailRepositoryInterface
       ->orWhere('description', 'LIKE', '%' .$input. '%')
       ->get();
     }
+
+    public function getBrand($text){
+      return Brand::where('name',$text)->first('id');
+    }
+    public function getModal($text){
+      return Modal::where('name',$text)->first('id');
+    }
    
+    public function getCategory($text){
+      return Category::where('name',$text)->first('id');
+    }
 }

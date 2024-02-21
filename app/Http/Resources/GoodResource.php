@@ -27,7 +27,7 @@ class GoodResource extends JsonResource
             'sale_price_per_unit'=>$this->sale_price_per_unit,
             'quantity'=>$this->quantity,
             'Received or Sold'=>$this->deal->deal_type=='income'? 'Sold':'Received',
-            'dealer' => $this->whenNotNull($this->dealer->user->name)
+            'dealer' => $this->whenNotNull($this->dealer?->user->name)
 
 
         ];

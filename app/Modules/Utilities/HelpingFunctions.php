@@ -5,10 +5,10 @@ use Illuminate\Support\Collection;
 
 class HelpingFunctions
 {
-    public static function paginate(Collection $collection)
+    public static function paginate(Collection $collection,int $page)
     {
         $itemsPerPage = 10; // Number of items to display per page
-        $pageNumber = 1; // The current page number
+        $pageNumber = $page; // The current page number
         
         // Assuming you have a collection called $collection containing your data
         

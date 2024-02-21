@@ -50,4 +50,12 @@ class UserRepository implements UserRepositoryInterface
         ->orWhere('role', 'LIKE', '%' .$input. '%')
         ->get();
     }
+
+    public function searchCustomer($input)
+    {
+        return  User::select( "id","name")
+        ->where([['name', 'LIKE', '%' .$input. '%'],['role','customer']])
+        ->orWhere([['email', 'LIKE', '%' .$input. '%'],['role','customer']])
+        ->get(); 
+    }
 }

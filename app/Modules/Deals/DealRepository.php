@@ -55,6 +55,11 @@ class DealRepository implements DealRepositoryInterface
       return  Deal::where('deal_type','income')->whereBetween('created_at',[$data['from'],$data['to']])->where('dealable_type','App\Models\Good')->get()->pluck('dealable_id')->toArray();  
     }
 
+    public function goods(array $data)
+    {
+      return  Deal::whereBetween('created_at',[$data['from'],$data['to']])->where('dealable_type','App\Models\Good')->get()->pluck('dealable_id')->toArray();  
+    }
+
     public function grns(array $data)
     {   
       return  Deal::where('deal_type','expend')->whereBetween('created_at',[$data['from'],$data['to']])->where('dealable_type','App\Models\Good')->get()->pluck('dealable_id')->toArray();  
@@ -117,6 +122,11 @@ class DealRepository implements DealRepositoryInterface
 
      }
       return $validDealIds;
+    }
+
+    public function getDealGroupId()
+    {
+      return Deal::max('deal_group_id');
     }
     
 }

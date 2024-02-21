@@ -24,42 +24,69 @@ class GoodService
         return GoodResource::collection($this->goodRepository->getAll());
     }
 
+    public function getAllWithinPeriod(array $data)
+    {
+      isset($data['page']) ? $page =$data['page'] :$page=0; 
+      $ids=$this->dealService->goods($data);
+       return GoodResource::collection($this->goodRepository->allGoods($ids,$page));
+    }
+
     public function getById($id)
     {
         return new GoodResource($this->goodRepository->getById($id));
     }
 
-    public function create(array $data)
+    public function create(array $dataArray)
     {
-         try
-         {
-            DB::beginTransaction();
-            $good=   new GoodResource( $this->goodRepository->create($data)); 
-            if($data['deal_type']=='income')
-            {
-              $this->stockService->decrement($good['item_code'],$good['quantity']);
-            }
-            else
-            {
-              $this->stockService->increment($good['item_code'],$good['quantity']); 
-            }
-            $deal= $this->dealService->create(['dealable_type'=>'App\Models\Good','dealable_id'=>$good['id'],'deal_type'=>$data['deal_type'],'amount'=>$data['amount']]);
-            if(isset($data['promised_amount']) && isset($data['promised_deadline']))
-            {
-             $promisedPayment=['amount'=>$data['promised_amount'],'deadline'=>$data['promised_deadline'],'deal_id'=>$deal['id']]; 
-             $this->promisedPaymentService->create($promisedPayment);  
-            }
-           
-            DB::commit();
+      try{
+        $good=[];
+        //  DB::beginTransaction();
 
-             return $good;
-         }
-         catch(\Exception $e)
-         {
-           DB::rollBack();
-           return $e;
-         }
-        
+          $deal_id= $this->dealService->getDealGroupId();
+          foreach ($dataArray as $data )
+           {      
+            try
+            {
+              $data['dealer_id']=1;
+                DB::beginTransaction();
+                $good=   new GoodResource( $this->goodRepository->create($data)); 
+                if($data['deal_type']=='income')
+                {
+                  $this->stockService->decrement($good['item_code'],$good['quantity']);
+                }
+                else
+                {
+                  $this->stockService->increment($good['item_code'],$good['quantity']); 
+                }
+            
+              
+                DB::commit();
+
+                return $good;
+            }
+            catch(\Exception $e)
+            {
+              DB::rollBack();
+              dd($e);
+              return $e;
+            }
+            }
+            dd('rf3');
+
+            $deal= $this->dealService->create(['dealable_type'=>'App\Models\Good','dealable_id'=>$good['id'],'deal_type'=>$dataArray['deal_type'],'amount'=>$dataArray['amount']]);
+            if(isset($dataArray['promised_amount']) && isset($dataArray['promised_deadline']))
+            {
+            $promisedPayment=['amount'=>$dataArray['promised_amount'],'deadline'=>$dataArray['promised_deadline'],'deal_id'=>$deal_id]; 
+            $this->promisedPaymentService->create($promisedPayment);  
+            }
+          //  DB::commit(); 
+          }   
+          catch(\Exception $e)
+          {
+            dd($e);
+            // DB::rollBack();
+            return $e;
+          }
     }
 
     public function update($id,array $data)
@@ -102,14 +129,17 @@ class GoodService
 
     public function allSales(array $data)
     {
+      isset($data['page']) ? $page =$data['page'] :$page=0; 
         $ids=$this->dealService->sales($data);
-        return GoodResource::collection($this->goodRepository->allGoods($ids));
+        return GoodResource::collection($this->goodRepository->allGoods($ids,$page));
     }
 
     public function allGrns(array $data)
     {
+      isset($data['page']) ? $page =$data['page'] :$page=0; 
+
         $ids=$this->dealService->grns($data);
-        return GoodResource::collection($this->goodRepository->allGoods($ids));
+        return GoodResource::collection($this->goodRepository->allGoods($ids,$page));
     }
     public function calProfitLost(array $data)
     {
@@ -119,16 +149,18 @@ class GoodService
         return new GoodResource(['income'=>$income,'cost'=>$cost,'profit_or_lost'=>$income-$cost]);
     }
 
-    public function allTimeSales()
+    public function allTimeSales(array $data)
     {
+      isset($data['page']) ? $page =$data['page'] :$page=0; 
        $ids=$this->dealService->allTimeSales();
-       return GoodResource::collection($this->goodRepository->allGoods($ids));
+       return GoodResource::collection($this->goodRepository->allGoods($ids,$page));
     }
 
-    public function allTimeGrns()
+    public function allTimeGrns(array $data)
     {
+      isset($data['page']) ? $page =$data['page'] :$page=0; 
        $ids=$this->dealService->allTimeGrns();
-       return GoodResource::collection($this->goodRepository->allGoods($ids));
+       return GoodResource::collection($this->goodRepository->allGoods($ids,$page));
     }
 
     public function allGoodDetailSales(array $data)
@@ -229,6 +261,18 @@ class GoodService
     public function productTransactionCount()
     {
       return $this->goodRepository->productTransactionCount();
+    }
+
+    public function searchAll(String $type, String $inputText)
+    {
+      if($type=='brand'||$type=='model'||$type=='category')
+      {
+       return $this->goodDetailService->searchSpecificGoodDetail($type,$inputText);
+      }
+      else if($type=='customer')
+      {
+         
+      }
     }
 
 }

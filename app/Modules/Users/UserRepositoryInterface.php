@@ -18,4 +18,8 @@ interface UserRepositoryInterface
     public function login($email);
 
     public function searchUser($input);
+
+    public function searchCustomer($input);
+
+
 }

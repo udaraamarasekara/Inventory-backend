@@ -53,15 +53,18 @@ class GoodRepository implements GoodRepositoryInterface
         return ['success'=>'Data deleted']; 
     }
 
-    public function allGoods(array $ids)
+    public function allGoods(array $ids,int $page)
     {
      $goods=[];   
      foreach($ids as $id)
      {
       $goods[]=$this->getById($id);
      }  
-     
-     return  HelpingFunctions::paginate(collect($goods));
+     if(!$page)
+     {
+       $page=1; 
+     }
+     return  HelpingFunctions::paginate(collect($goods),$page);
     }
    
     public function salesTotalCost(array $ids)

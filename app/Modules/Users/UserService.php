@@ -128,4 +128,9 @@ class UserService
        $fnl= collect($userSuggessions->merge($goodSuggessions))->merge($goodDetailSuggessions);
        return $fnl;
     }
+
+    public function searchCustomer($input)
+    {
+      return $this->userRepository->searchCustomer($input);  
+    }
 }

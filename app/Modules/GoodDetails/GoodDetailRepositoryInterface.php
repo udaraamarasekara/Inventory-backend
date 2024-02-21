@@ -23,4 +23,11 @@ interface GoodDetailRepositoryInterface
 
     public function searchCategories($input);
 
+    public function getBrand($text);
+
+    public function getModal($text);
+
+    public function getCategory($text);
+
+
 }

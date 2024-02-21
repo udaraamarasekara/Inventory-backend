@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->decimal('amount', 8, 2); //paid amount not total amount 
             $table->morphs('dealable'); 
+            $table->integer('deal_group_id')->nullable();
             $table->enum('deal_type',['income','expend']); 
             $table->softDeletes($column = 'deleted_at', $precision = 0);
         });

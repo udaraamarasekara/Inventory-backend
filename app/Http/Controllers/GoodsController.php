@@ -22,6 +22,95 @@ class GoodsController extends Controller
         return  $this->goodService->getAll();
     }
 
+    public function newGoodSearch(String $type, String $inputText)
+    {
+        return $this->goodService->searchAll($type,$inputText);  
+    }
+
+
+    public function getRelevantGoodDetailIds(array $data)
+    {
+       return $this->goodDetailService->getRelevantGoodDetailIds($data);     
+    }
+
+    public function getAllWithinPeriod(Request $request){
+        try 
+        {
+            $validatedData = $request->validate([
+                'from' => 'date',
+                'to' => 'date',
+                'page'=>'integer|nullable'
+            ]);
+            return $this->goodService->getAllWithinPeriod($validatedData); 
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+            ], $e->status);
+        } 
+ 
+    }
+
+    public function newSale(Request $request)
+    {
+         $request['deal_type']=1; 
+        return $this->store($request);
+    }
+
+    public function newGrn(Request $request)
+    {$finalData=[];
+        $validatorGood=$this->validateGoodData($request);
+        if ($validatorGood->fails()) {
+         return response()->json($validatorGood->errors());
+       }
+       $validatorPayment=$this->validatePaymentData($request);
+       if ($validatorPayment->fails()) {
+        return response()->json($validatorPayment->errors());
+      }
+
+        foreach($validatorGood->validated()['data'] as $dataSet)
+        {
+           try{  
+            $dataSet['deal_type']=2; 
+            $ids =$this->getRelevantGoodDetailIds($dataSet);
+            if($ids['brand_id']==null)
+            {
+              $type='brand';
+              $data['name']=$dataSet['brand'];
+              $data['description']='none';  
+              $ids['brand_id']= $this->addGoodDetail($data,$type)->id;  
+            }
+            if($ids['modal_id']==null)
+            {
+              $type='modal';
+              $data['name']=$dataSet['modal'];
+              $data['description']='none';  
+              $ids['modal_id']= $this->addGoodDetail($data,$type)->id;  
+            }
+            if($ids['category_id']==null)
+            {
+              $type='category';
+              $data['name']=$dataSet['category'];
+              $data['description']='none';  
+              $ids['category_id']= $this->addGoodDetail($data,$type)->id;  
+            }
+            $dataSet['brand_id']=$ids['brand_id'];
+            $dataSet['modal_id']=$ids['modal_id'];
+            $dataSet['category_id']=$ids['category_id'];
+            unset($dataSet['brand']);
+            unset($dataSet['modal']);
+            unset($dataSet['category']);
+            $finalData[]=$dataSet;
+            
+           }
+           catch(\Exception $e)
+           {
+            dd($e);
+           }
+        }
+        $finalData['amount']=$validatorPayment->validated()['amount'];
+        $this->store($finalData);
+    }
+
     public function goodsCount()
     {
         return  $this->goodService->goodsCount(); 
@@ -38,13 +127,9 @@ class GoodsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(array $data)
     {
-        $validator=$this->validateData($request);
-        if ($validator->fails()) {
-         return response()->json($validator->errors());
-       }
-        return $this->goodService->create($validator->validated());
+        return $this->goodService->create($data);
             
     }
 
@@ -100,17 +185,20 @@ class GoodsController extends Controller
             ], $e->status);
         } 
     }
-    public function addGoodDetail(Request $request,string $type)
+    public function addGoodDetail(array $data,string $type)
     {
         if(in_array($type,['brand','modal','category']))
         {
             try 
             {
-                $validatedData = $request->validate([
+                $validatedData =validator::make($data,[
                     'name' => 'required|max:255',
                     'description' => 'required|max:255',
                 ]);
-                return $this->goodDetailService->create($type,$validatedData);
+                if ($validatedData->fails()) {
+                    return response()->json($validatedData->errors());
+                  }
+                return $this->goodDetailService->create($type,$data);
             } catch (ValidationException $e) {
                 return response()->json([
                     'errors' => $e->errors(),
@@ -164,6 +252,7 @@ class GoodsController extends Controller
             $validatedData = $request->validate([
                 'from' => 'date|required',
                 'to' => 'date|required',
+                'page'=>'integer|nullable'
             ]);
             return $this->goodService->allSales($validatedData);
         } catch (ValidationException $e) {
@@ -176,12 +265,19 @@ class GoodsController extends Controller
 
     public function allTimeSales(Request $request)
     {
-      return $this->goodService->allTimeSales();  
+        $validatedData = $request->validate([
+            'page' => 'integer|nullable'
+        ]);
+
+      return $this->goodService->allTimeSales($validatedData);  
     }
 
     public function allTimeGrns(Request $request)
     {
-      return $this->goodService->allTimeGrns();  
+        $validatedData = $request->validate([
+            'page' => 'integer|nullable'
+        ]);  
+      return $this->goodService->allTimeGrns($validatedData);  
     }
 
     public function allGoodDetailSales(Request $request)
@@ -271,6 +367,7 @@ class GoodsController extends Controller
             $validatedData = $request->validate([
                 'from' => 'date|required',
                 'to' => 'date|required',
+                'page'=>'integer|nullable'
             ]);
             return $this->goodService->allGrns($validatedData);
         } catch (ValidationException $e) {
@@ -299,23 +396,28 @@ class GoodsController extends Controller
             ], $e->status);
         }   
     }
-    public function validateData(Request $request)
+    public function validateGoodData(Request $request)
     {
-       return Validator::make($request->all(), [
-        'item_code' => 'required|string',
-        'description' => 'required|max:800|String',
-        'brand_id'=>'required|exists:brands,id|integer',
-        'modal_id'=>'required|exists:modals,id|integer',
-        'category_id'=>'required|exists:categories,id|integer',
-        'dealable_type'=>'required|string',
-        'dealable_id'=>'required|integer',
-        'deal_type'=>'required|in:1,2',
-        'dealer_id'=>'nullable|exists:dealers,id|integer',
-        'received_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
-        'sale_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
-        'expired_date'=>'required|date_format:Y-m-d|date',
-        'unit'=>'required|string|max:20',
-        'quantity'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
+        $data = [ 'data' => $request->data ];
+       return Validator::make($data, [
+        'data.*.item_code' => 'required|string|unique:goods',
+        'data.*.description' => 'required|max:800|String',
+        'data.*.brand'=>'required|string|max:20',
+        'data.*.modal'=>'required|string|max:20',
+        'data.*.category'=>'required|string|max:20',
+        'data.*.dealer_id'=>'nullable|exists:dealers,id|integer',
+        'data.*.received_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
+        'data.*.sale_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
+        'data.*.expired_date'=>'nullable|date_format:Y-m-d|date',
+        'data.*.unit'=>'required|string|max:20',
+        'data.*.quantity'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
+        
+        ]);
+    }
+
+    public function validatePaymentData(Request $request)
+    {
+       return Validator::make($request->payment, [
         'amount'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         'promised_amount'=>'nullable|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         'promised_deadline'=>'nullable|date|date_format:Y-m-d'
