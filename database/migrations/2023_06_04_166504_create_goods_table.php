@@ -17,6 +17,7 @@ return new class extends Migration
             $table->String('item_code');
             $table->String('unit');
             $table->text('description');
+            $table->integer('deal_id');
             $table->foreignId('category_id')->constrained();
             $table->foreignId('brand_id')->constrained();
             $table->foreignId('modal_id')->constrained();

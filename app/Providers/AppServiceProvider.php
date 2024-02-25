@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\UserAbility;
 use App\Modules\Users\UserRepository;
 use App\Modules\Users\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -21,6 +22,8 @@ use App\Modules\PromisedPayments\PromisedPaymentRepository;
 use App\Modules\PromisedPayments\PromisedPaymentRepositoryInterface;
 use App\Modules\BuiltInTasks\BuiltInTaskRepository;
 use App\Modules\BuiltInTasks\BuiltInTaskRepositoryInterface;
+use App\Modules\UserAbilities\UserAbilityRepository;
+use App\Modules\UserAbilities\UserAbilityRepositoryInterface;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -37,8 +40,7 @@ class AppServiceProvider extends ServiceProvider
      $this->app->bind(StockRepositoryInterface::class,StockRepository::class);
      $this->app->bind(DealerRepositoryInterface::class,DealerRepository::class);
      $this->app->bind(BuiltInTaskRepositoryInterface::class,BuiltInTaskRepository::class);
-
-        
+     $this->app->bind(UserAbilityRepositoryInterface::class,UserAbilityRepository::class);        
         //
     }
 

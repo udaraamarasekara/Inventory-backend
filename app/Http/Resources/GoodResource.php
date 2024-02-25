@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Deal;
 class GoodResource extends JsonResource
 {
     /**
@@ -26,7 +27,7 @@ class GoodResource extends JsonResource
             'received_price_per_unit'=>$this->received_price_per_unit,
             'sale_price_per_unit'=>$this->sale_price_per_unit,
             'quantity'=>$this->quantity,
-            'Received or Sold'=>$this->deal->deal_type=='income'? 'Sold':'Received',
+            'Received or Sold'=>Deal::where('dealable_id',$this->deal_id)->first()->deal_type=='income'? 'Sold':'Received',
             'dealer' => $this->whenNotNull($this->dealer?->user->name)
 
 

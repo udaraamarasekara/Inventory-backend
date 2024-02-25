@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Deal extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable=['dealable_type','dealable_id','amount','deal_type'];
+    protected $fillable=['dealable_type','dealable_id','amount','deal_type','deal_id'];
 
     public function dealable():MorphTo
     {
@@ -19,7 +19,7 @@ class Deal extends Model
 
     public function promisedPayment()
     {
-      return $this->hasOne(PromisedPayment::class);
+      return $this->hasOne(PromisedPayment::class,'deal_id');
     }  
 
 }

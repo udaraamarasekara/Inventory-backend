@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('productTransactionCount',[GoodsController::class,'productTransactionCount']);
     Route::get('newGoodSearch/{type}/{inputText}',[GoodsController::class,'newGoodSearch']);
     Route::get('test',(function(){return true;}));
+    Route::post('profession',[AdminController::class,'newProfession']);
 
 });
 Route::get('/',[UserController::class,'invalidRequest'])->name('error');

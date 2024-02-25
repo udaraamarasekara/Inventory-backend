@@ -5,14 +5,15 @@ use App\Http\Resources\UserResource;
 use App\Modules\Employees\EmployeeService;
 use App\Modules\GoodDetails\GoodDetailService;
 use App\Modules\Goods\GoodService;
+use App\Modules\UserAbilities\UserAbilityService;
 use App\Modules\Users\UserRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Dealers\DealerService;
-
+use App\Models\Profession;
 class UserService 
 {
 
-    public function __construct(protected UserRepositoryInterface $userRepository,protected EmployeeService $employeeService,protected DealerService $dealerService,protected GoodService $goodService,protected GoodDetailService $goodDetailService)
+    public function __construct(protected UserRepositoryInterface $userRepository,protected UserAbilityService $userAbilityService ,protected EmployeeService $employeeService,protected DealerService $dealerService,protected GoodService $goodService,protected GoodDetailService $goodDetailService)
     {
     }
 
@@ -56,7 +57,7 @@ class UserService
         try
         {
             DB::beginTransaction();
-            $user= new UserResource($this->userRepository->create($data));
+            $user= $this->userRepository->create($data);
             $data['user_id']=$user['id']; 
             if($data['role']=='employee')
             {
@@ -66,6 +67,7 @@ class UserService
             {
              $this->dealerService->create($data); 
             }
+
             DB::commit();
         }
         catch(\Exception $e)
@@ -132,5 +134,20 @@ class UserService
     public function searchCustomer($input)
     {
       return $this->userRepository->searchCustomer($input);  
+    }
+
+    public function newProfession(array $data)
+    {
+      try{
+         DB::beginTransaction();
+         $profession_id =Profession::create($data)->id;
+         $this->userAbilityService->setAbilitiesForProfession($profession_id,$data['abilities']);
+         DB::commit(); 
+      }
+      catch(\Exception $e)
+      {
+        DB::rollBack();
+      }
+
     }
 }

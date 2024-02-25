@@ -86,9 +86,6 @@ class DealService
        return $this->dealRepository->getReleventDealsForGoods($dealIds);
     }
 
-    public function getDealGroupId()
-    {
-      return $this->dealRepository->getDealGroupId()+1;
-    }
+   
     
 }

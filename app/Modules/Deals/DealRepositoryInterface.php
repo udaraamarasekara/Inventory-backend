@@ -35,7 +35,6 @@ interface DealRepositoryInterface
     
     public function getReleventDealsForGoods(array $dealIds);
 
-    public function getDealGroupId();
 
 
 }

@@ -17,6 +17,9 @@ class DealerTableSeeder extends Seeder
       $dealers=[['user_id'=>User::where('name','unknownSupplier')->first()->id,'description'=>'none','type'=>1],
       ['user_id'=>User::where('name','unknownCustomer')->first()->id,'description'=>'none','type'=>2]
     ];
-      Dealer::create($dealers); 
+      foreach($dealers as $dealer)
+      {
+        Dealer::create($dealer); 
+      }
     }
 }

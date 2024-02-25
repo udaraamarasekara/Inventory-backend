@@ -21,7 +21,9 @@ class Good extends Model
         "expired_date",
         "unit",
         "quantity",
-        "dealer_id"
+        "dealer_id",
+        "deal_id"
+        
     ];
 
     public function brand(){

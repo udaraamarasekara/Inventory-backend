@@ -22,5 +22,28 @@ class HelpingFunctions
         return $paginator;
         
     }
+
+    function mergeArraysReplaceOverlapping($array1, $array2) {
+        // Iterate over the first array
+        foreach ($array1 as $key => $value) {
+            // Check if the key exists in the second array
+            if (array_key_exists($key, $array2)) {
+                // Replace the value in the first array with the value from the second array
+                $array1[$key] = $array2[$key];
+            } else {
+                // If the key doesn't exist in the second array, add it to the merged array
+                $array1[$key] = $value;
+            }
+        }
+        
+        // Merge any remaining elements from the second array into the merged array
+        foreach ($array2 as $key => $value) {
+            if (!array_key_exists($key, $array1)) {
+                $array1[$key] = $value;
+            }
+        }
+        
+        return $array1;
+    }
 }
 

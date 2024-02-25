@@ -8,6 +8,8 @@ interface GoodRepositoryInterface
     public function getAll();
     
     public function getById($id);
+
+    public function getByDealId($id);
     
     public function create(array $data);
     
@@ -29,5 +31,7 @@ interface GoodRepositoryInterface
 
     public function searchGood($input);
 
-
+    public function getDealGroupId();
+    
+    public function deleteByDealId($id);
 }

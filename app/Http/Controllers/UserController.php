@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Category;
+use App\Models\Good;
 use App\Modules\GoodDetails\GoodDetailService;
 use App\Modules\Goods\GoodService;
 use App\Modules\Users\UserService;
@@ -8,6 +10,10 @@ use Exception;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 use Illuminate\Http\Request;
+use  App\Models\User;
+use  App\Models\Brand;
+use App\Models\Modal;
+
 
 class UserController extends Controller
 {
@@ -35,6 +41,7 @@ class UserController extends Controller
 
   public function searchAll(String $inputText)
   {
+    $this->authorize('view',User::class);
     return $this->userService->searchAll($inputText);  
   }
 
@@ -64,6 +71,7 @@ class UserController extends Controller
     if($table=='user')
     {
       try{
+      $this->authorize('view',User::class);
       return $this->userService->getById($id);
       }catch(Exception $e)
       {
@@ -71,7 +79,7 @@ class UserController extends Controller
       }
     }
     else if($table=='good')
-    {
+    {  $this->authorize('view',Good::class);
        $result= $this->goodService->getById($id);
        if($result)
        {
@@ -82,11 +90,22 @@ class UserController extends Controller
        return $result;
 
     }
-    else if($table=='brand'|| $table=='category'|| $table=='modal' )
+    else if($table=='brand')
     {
-      
+      $this->authorize('view',Brand::class);
        $result=  $this->goodDetailService->getById($table,$id);
+    }else if( $table=='modal')
+    {
+      $this->authorize('view',Modal::class);
+      $result=  $this->goodDetailService->getById($table,$id);
+
     }
+    else if($table=='category')
+    {
+      $this->authorize('view',Category::class);
+      $result=  $this->goodDetailService->getById($table,$id);
+    }
+
 
   }
 

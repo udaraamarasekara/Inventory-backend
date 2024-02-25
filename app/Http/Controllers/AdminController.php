@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Profession;
 use App\Modules\Users\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-
+use App\Models\User;
 class AdminController extends Controller
 {
 
@@ -18,6 +19,7 @@ class AdminController extends Controller
 
     public function index()
     {
+      $this->authorize('view',User::class);
        return  $this->userService->getAll();
     }
 
@@ -34,16 +36,12 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     { 
-      if(in_array($request->all()['role'],['seller','customer','employee']))
-      {
-           $validator=$this->validateData($request);
-           if ($validator->fails()) {
-            return response()->json($validator->errors());
-          }
-           return $this->userService->create($validator->validated());
-               
-      }
-      return response()->json(["role"=>"The selected role is invalid"]);     
+      $this->authorize('create',User::class);
+      $validator=$this->validateData($request);
+      if ($validator->fails()) {
+      return response()->json($validator->errors());
+        }
+      return $this->userService->create($request->all());
     }
  
 
@@ -52,7 +50,19 @@ class AdminController extends Controller
      */
     public function show(string $id)
     {
+        $this->authorize('view',User::class);
         return $this->userService->getById($id);
+    }
+
+    public function newProfession(Request $request){
+       $this->authorize('create',Profession::class);
+       $request->validate([
+        'post'=>'required|max:800|string',
+        'agreement'=>'required|max:800|string',
+        'basic_salary'=>'required|numeric',
+        'abilities'=>'required|array'
+       ]);
+       return $this->userService->newProfession($request->all());
     }
 
     /**
@@ -68,16 +78,16 @@ class AdminController extends Controller
      */
     public function update(Request $request, string $id)
     {
-       if(in_array($request->all()['role'],['admin','seller','customer','employee']))
-      {
+      $this->authorize('edit',User::class);
+      
            $validator=$this->validateData($request);
            if ($validator->fails()) {
             return response()->json($validator->errors());
           }
-           return $this->userService->update($id,$validator->validated());
+          
+           return $this->userService->update($id,$request->all());
                
-      }
-      return response()->json(["role"=>"The selected role is invalid"]);        
+      
     }
 
     /**
@@ -85,18 +95,19 @@ class AdminController extends Controller
      */
     public function destroy(string $id)
     {
+      $this->authorize('delete',User::class); 
       return $this->userService->delete($id);
     }
 
     public function validateData(Request $request)
     {
-      if($request->all()['role']=='employee')
+      if($request['role']=='employee')
       {
           $validator= Validator::make($request->all(), [
           'email' => 'required|email|unique:users|max:800',
           'password' => 'required|max:18|min:5|confirmed|unique:users',
           'name'=>'required|max:40',
-          'role'=>'required|max:20',
+          'role'=>['required','max:50',Rule::in([0,1,2])],
           'profession_id'=>'required|exists:professions,id|integer',
           ]);
       }
@@ -107,9 +118,10 @@ class AdminController extends Controller
             'email' => 'required|email|unique:users|max:800',
             'password' => 'required|max:18|min:5|confirmed|unique:users',
             'name'=>'required|max:40',
-            'role'=>'required|max:20',
             'description'=>'required|max:800|string',
-            'type'=>['required','max:50',Rule::in(['moneyGainer','moneySpender'])]
+            'type'=>['required','max:50',Rule::in([0,1])],
+            'role'=>['required','max:50',Rule::in([0,1,2])]
+
 
             ]
           );
@@ -118,5 +130,18 @@ class AdminController extends Controller
       }
       return $validator;
        
+    }
+
+    public function validateAbilities(Request $request)
+    {
+      $features= ['addSale','addGrn'];
+      foreach($request->abilities as $ability)
+      {
+        if(!in_array($ability,$features))
+        {
+          return false;
+        }
+      }
+      return true;
     }
 }

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('promised_payments', function (Blueprint $table) {
+        Schema::create('user_abilities', function (Blueprint $table) {
             $table->id();
-            $table->integer('deal_id')->unique();
-            $table->decimal('amount', 8, 2);
-            $table->date('deadline'); 
-            $table->date('payed_at')->nullable();     
             $table->timestamps();
+            $table->foreignId('profession_id')->constrained();
+            $table->string('table');
+            $table->enum('method',['create','view','update','delete']);
+            $table->boolean('ability');
             $table->softDeletes($column = 'deleted_at', $precision = 0);
 
         });
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('promised_payments');
+        Schema::dropIfExists('user_abilities');
     }
 };

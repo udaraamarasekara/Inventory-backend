@@ -14,8 +14,8 @@ class UserTableSeeder extends Seeder
     public function run(): void
     {
         $users=[['name'=>'udara','email'=>'admin@gmail.com','role'=>'admin','password'=>Hash::make('flashback1')],
-        ['name'=>'unknownSupplier','email'=>'unknownSupplier.gmail.com','role'=>'supplier','password'=>Hash::make('unknownSupplier')],
-        ['name'=>'unknownCustomer','email'=>'unknownCustomer.gmail.com','role'=>'customer','password'=>Hash::make('unknownCustomer')]
+        ['name'=>'unknownSupplier','email'=>'unknownSupplier@gmail.com','role'=>'supplier','password'=>Hash::make('unknownSupplier')],
+        ['name'=>'unknownCustomer','email'=>'unknownCustomer@gmail.com','role'=>'customer','password'=>Hash::make('unknownCustomer')]
     ];
         foreach($users as $user)
         {

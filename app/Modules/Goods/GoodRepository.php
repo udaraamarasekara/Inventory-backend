@@ -27,7 +27,7 @@ class GoodRepository implements GoodRepositoryInterface
 
     public function update($id, array $data)
     {
-        $good = $this->getById($id);
+        $good = $this->getByDealId($id);
         if($good)
         {
           $good->update($data);
@@ -52,13 +52,15 @@ class GoodRepository implements GoodRepositoryInterface
         }
         return ['success'=>'Data deleted']; 
     }
-
     public function allGoods(array $ids,int $page)
     {
      $goods=[];   
      foreach($ids as $id)
      {
-      $goods[]=$this->getById($id);
+       foreach($this->getByDealId($id) as $single)
+       {
+        $goods[]=$single;
+       }
      }  
      if(!$page)
      {
@@ -72,9 +74,9 @@ class GoodRepository implements GoodRepositoryInterface
         $goods=0;   
         foreach($ids as $id)
         {
-         if($this->getById($id))
+         if($this->getByDealId($id))
          {
-            $goods+=$this->getById($id)['received_price_per_unit'];
+            $goods+=$this->getByDealId($id)['received_price_per_unit'];
          }   
         }
         return $goods;  
@@ -85,7 +87,7 @@ class GoodRepository implements GoodRepositoryInterface
      $goods=[];   
      foreach($ids as $id)
      {
-      $goods[]=$this->getById($id);
+      $goods[]=$this->getByDealId($id);
      }  
      $goodsRow=collect($goods);
      $fetchedGoods=  $goodsRow->filter(function($good) use ($data){
@@ -99,7 +101,7 @@ class GoodRepository implements GoodRepositoryInterface
         $goods=[];   
         foreach($ids as $id)
         {
-         $goods[]=$this->getById($id);
+         $goods[]=$this->getByDealId($id);
         }  
          return collect($goods);
     }
@@ -138,4 +140,18 @@ class GoodRepository implements GoodRepositoryInterface
       ->get();
     }
 
+    public function getDealGroupId()
+    {
+      return Good::max('id');
+    }
+
+    public function deleteByDealId($id)
+    {
+      Good::where('deal_id',$id)->delete();  
+    }
+
+    public function getByDealId($id)
+    {
+       return Good::where('deal_id',$id)->get();  
+    }
 }

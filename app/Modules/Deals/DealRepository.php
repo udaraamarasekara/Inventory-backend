@@ -78,11 +78,13 @@ class DealRepository implements DealRepositoryInterface
 
     public function deleteReleventToGood($id)
     {
-       if(Deal::where('dealable_id',$id)->first())
+       if($deal= Deal::where([['dealable_id',$id],['dealable_type','App\Models\Good']]))
        {
-        $deal= Deal::where('dealable_id',$id)->value('id');
-        Deal::where('dealable_id',$id)->delete();
-        return $deal;
+       $dealData=[]; 
+       $dealData['deal_type']=$deal->first()['deal_type'];
+       $dealData['id']=$deal->first()['id']; 
+        $deal->delete();
+       return $dealData;
 
        } 
     }
@@ -124,9 +126,6 @@ class DealRepository implements DealRepositoryInterface
       return $validDealIds;
     }
 
-    public function getDealGroupId()
-    {
-      return Deal::max('deal_group_id');
-    }
+  
     
 }

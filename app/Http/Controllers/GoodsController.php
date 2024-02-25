@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Good;
+use App\Models\Modal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Modules\Goods\GoodService;
@@ -18,12 +22,12 @@ class GoodsController extends Controller
     }
 
     public function index()
-    {
+    { 
         return  $this->goodService->getAll();
     }
 
     public function newGoodSearch(String $type, String $inputText)
-    {
+    {   
         return $this->goodService->searchAll($type,$inputText);  
     }
 
@@ -33,7 +37,8 @@ class GoodsController extends Controller
        return $this->goodDetailService->getRelevantGoodDetailIds($data);     
     }
 
-    public function getAllWithinPeriod(Request $request){
+    public function getAllWithinPeriod(Request $request)
+    {   
         try 
         {
             $validatedData = $request->validate([
@@ -52,12 +57,7 @@ class GoodsController extends Controller
 
     public function newSale(Request $request)
     {
-         $request['deal_type']=1; 
-        return $this->store($request);
-    }
-
-    public function newGrn(Request $request)
-    {$finalData=[];
+        $finalData=[];
         $validatorGood=$this->validateGoodData($request);
         if ($validatorGood->fails()) {
          return response()->json($validatorGood->errors());
@@ -70,7 +70,6 @@ class GoodsController extends Controller
         foreach($validatorGood->validated()['data'] as $dataSet)
         {
            try{  
-            $dataSet['deal_type']=2; 
             $ids =$this->getRelevantGoodDetailIds($dataSet);
             if($ids['brand_id']==null)
             {
@@ -99,7 +98,7 @@ class GoodsController extends Controller
             unset($dataSet['brand']);
             unset($dataSet['modal']);
             unset($dataSet['category']);
-            $finalData[]=$dataSet;
+            $finalData['data'][]=$dataSet;
             
            }
            catch(\Exception $e)
@@ -107,12 +106,68 @@ class GoodsController extends Controller
             dd($e);
            }
         }
+        $finalData['deal_type']=1; 
+        $finalData['amount']=$validatorPayment->validated()['amount'];
+        $this->store($finalData);
+    }
+
+    public function newGrn(Request $request)
+    {$finalData=[];
+        $validatorGood=$this->validateGoodData($request);
+        if ($validatorGood->fails()) {
+         return response()->json($validatorGood->errors());
+       }
+       $validatorPayment=$this->validatePaymentData($request);
+       if ($validatorPayment->fails()) {
+        return response()->json($validatorPayment->errors());
+      }
+
+        foreach($validatorGood->validated()['data'] as $dataSet)
+        {
+           try{  
+            $ids =$this->getRelevantGoodDetailIds($dataSet);
+            if($ids['brand_id']==null)
+            {
+              $type='brand';
+              $data['name']=$dataSet['brand'];
+              $data['description']='none';  
+              $ids['brand_id']= $this->addGoodDetail($data,$type)->id;  
+            }
+            if($ids['modal_id']==null)
+            {
+              $type='modal';
+              $data['name']=$dataSet['modal'];
+              $data['description']='none';  
+              $ids['modal_id']= $this->addGoodDetail($data,$type)->id;  
+            }
+            if($ids['category_id']==null)
+            {
+              $type='category';
+              $data['name']=$dataSet['category'];
+              $data['description']='none';  
+              $ids['category_id']= $this->addGoodDetail($data,$type)->id;  
+            }
+            $dataSet['brand_id']=$ids['brand_id'];
+            $dataSet['modal_id']=$ids['modal_id'];
+            $dataSet['category_id']=$ids['category_id'];
+            unset($dataSet['brand']);
+            unset($dataSet['modal']);
+            unset($dataSet['category']);
+            $finalData['data'][]=$dataSet;
+            
+           }
+           catch(\Exception $e)
+           {
+            dd($e);
+           }
+        }
+        $finalData['deal_type']=2; 
         $finalData['amount']=$validatorPayment->validated()['amount'];
         $this->store($finalData);
     }
 
     public function goodsCount()
-    {
+    {  
         return  $this->goodService->goodsCount(); 
     }
 
@@ -129,6 +184,8 @@ class GoodsController extends Controller
      */
     public function store(array $data)
     {
+        $this->authorize('create',Good::class);
+
         return $this->goodService->create($data);
             
     }
@@ -153,7 +210,7 @@ class GoodsController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
+    {   $this->authorize('edit',Good::class);
         $validator=$this->validateData($request);
         if ($validator->fails()) {
          return response()->json($validator->errors());
@@ -167,6 +224,15 @@ class GoodsController extends Controller
      */
     public function destroy(string $id)
     {
+        
+        $this->authorize('delete',Good::class);
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'exists:goods,deal_id,deleted_at,NULL',
+        ]);
+        if ($validator->fails())
+        {
+            return response()->json($validator->errors());  
+        }
         return $this->goodService->delete($id);
     }
 
@@ -188,7 +254,7 @@ class GoodsController extends Controller
     public function addGoodDetail(array $data,string $type)
     {
         if(in_array($type,['brand','modal','category']))
-        {
+        { if($type==='brand'){ $this->authorize('create',Brand::class);}elseif($type==='modal'){$this->authorize('create',Modal::class);} else{$this->authorize('create',Category::class);}
             try 
             {
                 $validatedData =validator::make($data,[
@@ -220,7 +286,7 @@ class GoodsController extends Controller
     public function updateGoodDetail(Request $request,string $type,string $id)
     {
         if(in_array($type,['brand','modal','category']))
-        {
+        {if($type==='brand'){ $this->authorize('edit',Brand::class);}elseif($type==='modal'){$this->authorize('edit',Modal::class);} else{$this->authorize('edit',Category::class);}
             try 
             {
                 $validatedData = $request->validate([
@@ -241,6 +307,7 @@ class GoodsController extends Controller
     {
         if(in_array($type,['brand','modal','category']))
         {
+           if( $type==='brand' ){$this->authorize('delete',Brand::class);}elseif($type==='modal'){$this->authorize('delete',Modal::class); }else{$this->authorize('delete',Category::class);} 
             return $this->goodDetailService->delete($type,$id);
         }
         return response()->json(["type"=>"The selected type is invalid"]);     
@@ -400,7 +467,7 @@ class GoodsController extends Controller
     {
         $data = [ 'data' => $request->data ];
        return Validator::make($data, [
-        'data.*.item_code' => 'required|string|unique:goods',
+        'data.*.item_code' => 'required|string',
         'data.*.description' => 'required|max:800|String',
         'data.*.brand'=>'required|string|max:20',
         'data.*.modal'=>'required|string|max:20',

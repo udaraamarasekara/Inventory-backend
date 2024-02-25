@@ -50,7 +50,7 @@ class StockRepository implements StockRepositoryInterface
     public function checkForAvailability($id,int $quantity)
     {
         $stock = $this->getById($id);
-        if($stock!==null && $stock->quantity>$quantity)
+        if($stock!==null && $stock->quantity>=$quantity)
         {
           return true;  
         }

@@ -36,33 +36,39 @@ class GoodService
         return new GoodResource($this->goodRepository->getById($id));
     }
 
+    public function getByDealId($id)
+    {
+      return $this->goodRepository->getByDealId($id);
+    }
+
     public function create(array $dataArray)
     {
       try{
-        $good=[];
-        //  DB::beginTransaction();
-
-          $deal_id= $this->dealService->getDealGroupId();
-          foreach ($dataArray as $data )
-           {      
+        $goodRowArry=[];
+          DB::beginTransaction();
+           $deal_group_id= $this->goodRepository->getDealGroupId()+1;
+          foreach ($dataArray['data'] as $data )
+         {  
+            
             try
             {
-              $data['dealer_id']=1;
+              
                 DB::beginTransaction();
-                $good=   new GoodResource( $this->goodRepository->create($data)); 
-                if($data['deal_type']=='income')
+                $data['dealer_id']=2;
+                $data['deal_id']=$deal_group_id;
+                $goodRow=   new GoodResource( $this->goodRepository->create($data)); 
+                if($dataArray['deal_type']=='income')
                 {
-                  $this->stockService->decrement($good['item_code'],$good['quantity']);
+                  $this->stockService->decrement($goodRow['item_code'],$goodRow['quantity']);
                 }
                 else
                 {
-                  $this->stockService->increment($good['item_code'],$good['quantity']); 
+                  $this->stockService->increment($goodRow['item_code'],$goodRow['quantity']); 
                 }
             
-              
-                DB::commit();
 
-                return $good;
+                DB::commit();
+                $goodRowArry= $goodRow;
             }
             catch(\Exception $e)
             {
@@ -71,20 +77,18 @@ class GoodService
               return $e;
             }
             }
-            dd('rf3');
-
-            $deal= $this->dealService->create(['dealable_type'=>'App\Models\Good','dealable_id'=>$good['id'],'deal_type'=>$dataArray['deal_type'],'amount'=>$dataArray['amount']]);
+            $deal_id= $this->dealService->create(['dealable_type'=>'App\Models\Good','dealable_id'=>$goodRowArry['deal_id'],'deal_type'=>$dataArray['deal_type'],'amount'=>$dataArray['amount']])->id;
             if(isset($dataArray['promised_amount']) && isset($dataArray['promised_deadline']))
             {
             $promisedPayment=['amount'=>$dataArray['promised_amount'],'deadline'=>$dataArray['promised_deadline'],'deal_id'=>$deal_id]; 
             $this->promisedPaymentService->create($promisedPayment);  
             }
-          //  DB::commit(); 
+            DB::commit(); 
           }   
           catch(\Exception $e)
           {
             dd($e);
-            // DB::rollBack();
+           DB::rollBack();
             return $e;
           }
     }
@@ -102,8 +106,8 @@ class GoodService
               $this->stockService->update($good['item_code'],$good['quantity'],$quantityToRemove);
               if(isset($data['promised_amount']) && isset($data['promised_deadline']))
               {
-               $promisedPayment=['amount'=>$data['promised_amount'],'deadline'=>$data['promised_deadline'],'deal_id'=>$dealId]; 
-               $this->promisedPaymentService->updateByDealId($promisedPayment);  
+               $promisedPayment=['amount'=>$data['promised_amount'],'deadline'=>$data['promised_deadline'],'deal_group_id'=>$dealId]; 
+               $this->promisedPaymentService->updateByDealGroupId($promisedPayment);  
               }
             }else
             {
@@ -121,12 +125,32 @@ class GoodService
     }
 
     public function delete($id)
-    {
-        $dealId= $this->dealService->deleteReleventToGood($id);
-        $this->promisedPaymentService->deleteIfAny($dealId);  
-        return $this->goodRepository->delete($id);
-    }
+    { try{
+       DB::beginTransaction();
+        $deal= $this->dealService->deleteReleventToGood($id);
+        $this->promisedPaymentService->deleteIfAny($deal['id']); 
+        foreach($this->getByDealId($id) as $goodRow)
+        {
+          if($deal['deal_type']=='expend')
+          {
+            $this->stockService->decrement($goodRow['item_code'],$goodRow['quantity']);
+          }
+          else
+          {
+            $this->stockService->increment($goodRow['item_code'],$goodRow['quantity']); 
+          }
+      
+        }
+         $result=  $this->goodRepository->deleteByDealId($id);
+         DB::commit();
 
+       return $result;
+    
+      }catch(\Exception $e)
+      {dd($e);
+          DB::rollBack(); 
+      }
+   }
     public function allSales(array $data)
     {
       isset($data['page']) ? $page =$data['page'] :$page=0; 
@@ -274,5 +298,10 @@ class GoodService
          
       }
     }
+    public function getDealGroupId()
+    {
+      return $this->goodRepository->getDealGroupId();
+    }
+
 
 }
