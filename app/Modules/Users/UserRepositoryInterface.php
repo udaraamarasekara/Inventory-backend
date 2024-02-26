@@ -21,5 +21,12 @@ interface UserRepositoryInterface
 
     public function searchCustomer($input);
 
+    public function searchSupplier($input);
+
+    public function people($type);
+
+    public function professions();
+
+    public function getProfessions();
 
 }

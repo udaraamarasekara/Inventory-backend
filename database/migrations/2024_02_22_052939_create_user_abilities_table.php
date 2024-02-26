@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('profession_id')->constrained();
-            $table->string('table');
-            $table->enum('method',['create','view','update','delete']);
+            $table->string('controller');
+            $table->string('method');
             $table->boolean('ability');
             $table->softDeletes($column = 'deleted_at', $precision = 0);
 

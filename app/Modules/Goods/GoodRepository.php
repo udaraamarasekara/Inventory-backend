@@ -135,11 +135,16 @@ class GoodRepository implements GoodRepositoryInterface
       ->orWhere('unit', 'LIKE', '%' .$input. '%')
       ->orWhere('description', 'LIKE', '%' .$input. '%')
       ->orWhere('received_price_per_unit', 'LIKE', '%' .$input. '%')
-      ->orWhere('expired_date', 'LIKE', '%' .$input. '%')
+      ->orWhere('job_number', 'LIKE', '%' .$input. '%')
       ->orWhere('sale_price_per_unit', 'LIKE', '%' .$input. '%')
       ->get();
     }
 
+    public function searchColumn($type, $text)
+    {
+      return Good::select([$type])
+      ->where($type, 'LIKE', '%' .$text. '%')->get();
+    }
     public function getDealGroupId()
     {
       return Good::max('id');
@@ -154,4 +159,6 @@ class GoodRepository implements GoodRepositoryInterface
     {
        return Good::where('deal_id',$id)->get();  
     }
+
+   
 }

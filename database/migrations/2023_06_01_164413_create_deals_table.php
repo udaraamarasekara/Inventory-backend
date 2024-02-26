@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('amount', 8, 2); //paid amount not total amount 
             $table->morphs('dealable'); 
             $table->enum('deal_type',['income','expend']); 
+            $table->integer('relevent_user');
             $table->softDeletes($column = 'deleted_at', $precision = 0);
         });
     }

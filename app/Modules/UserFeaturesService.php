@@ -22,6 +22,17 @@ class UserFeaturesService{
         
           ];
  }   
+
+ public function editGrn()
+ {
+    return[
+                ['controller'=>'good','method'=>3,'ability'=>true],
+                ['controller'=>'good','method'=>4,'ability'=>true],
+                ['controller'=>'deal','method'=>3,'ability'=>true],
+                ['controller'=>'deal','method'=>4,'ability'=>true],
+               
+          ];
+ }   
 public function addSale()
 {
     return[
@@ -45,7 +56,16 @@ public function addSale()
 
 
 }
-
+public function editSale()
+{
+   return[
+               ['table'=>'good','method'=>3,'ability'=>true],
+               ['table'=>'good','method'=>4,'ability'=>true],
+               ['table'=>'deal','method'=>3,'ability'=>true],
+               ['table'=>'deal','method'=>4,'ability'=>true],
+              
+         ];
+} 
 
 
 

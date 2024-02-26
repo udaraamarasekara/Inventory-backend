@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Modules\Users;
+use App\Http\Resources\CommonResource;
 use App\Http\Resources\UserResource;
 use App\Modules\Employees\EmployeeService;
 use App\Modules\GoodDetails\GoodDetailService;
@@ -131,10 +132,9 @@ class UserService
        return $fnl;
     }
 
-    public function searchCustomer($input)
-    {
-      return $this->userRepository->searchCustomer($input);  
-    }
+  
+
+   
 
     public function newProfession(array $data)
     {
@@ -149,5 +149,21 @@ class UserService
         DB::rollBack();
       }
 
+    }
+
+    public function getProfessions()
+    {
+      return new CommonResource($this->userRepository->getProfessions());  
+    }
+
+    public function peopleData()
+    {
+      $people=[];  
+      $people['suppliers']=$this->userRepository->people('supplier');
+      $people['customers']=$this->userRepository->people('customer');
+      $people['employees']=$this->userRepository->people('employee');
+      $people['professions']=$this->userRepository->professions();
+      return new CommonResource($people);
+      
     }
 }

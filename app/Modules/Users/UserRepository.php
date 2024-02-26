@@ -2,6 +2,7 @@
 
 namespace App\Modules\Users;
 
+use App\Models\Profession;
 use App\Models\User;
 use App\Modules\Users\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
@@ -57,5 +58,28 @@ class UserRepository implements UserRepositoryInterface
         ->where([['name', 'LIKE', '%' .$input. '%'],['role','customer']])
         ->orWhere([['email', 'LIKE', '%' .$input. '%'],['role','customer']])
         ->get(); 
+    }
+
+    public function searchSupplier($input)
+    {
+        return  User::select( "id","name")
+        ->where([['name', 'LIKE', '%' .$input. '%'],['role','supplier']])
+        ->orWhere([['email', 'LIKE', '%' .$input. '%'],['role','supplier']])
+        ->get(); 
+    }
+
+    public function people($type)
+    {
+      return User::where('role',$type)->count();  
+    }
+
+    public function professions()
+    {
+      return Profession::count();  
+    }
+
+    public function getProfessions()
+    {
+       return Profession::all(); 
     }
 }

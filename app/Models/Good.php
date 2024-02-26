@@ -18,7 +18,7 @@ class Good extends Model
         "category_id",
         "received_price_per_unit",
         "sale_price_per_unit",
-        "expired_date",
+        "job_number",
         "unit",
         "quantity",
         "dealer_id",

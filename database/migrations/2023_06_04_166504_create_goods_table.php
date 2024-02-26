@@ -22,7 +22,9 @@ return new class extends Migration
             $table->foreignId('brand_id')->constrained();
             $table->foreignId('modal_id')->constrained();
             $table->foreignId('dealer_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->date('expired_date')->nullable();
+            $table->string('job_number');
+            $table->integer('stock_number');
+            $table->integer('part_number');
             $table->decimal('received_price_per_unit', 8, 2);
             $table->integer('quantity');
             $table->decimal('sale_price_per_unit', 8, 2);

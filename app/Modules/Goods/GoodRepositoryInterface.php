@@ -34,4 +34,7 @@ interface GoodRepositoryInterface
     public function getDealGroupId();
     
     public function deleteByDealId($id);
+
+    public function searchColumn($type,$text);
+
 }

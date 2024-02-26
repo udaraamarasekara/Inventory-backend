@@ -27,7 +27,7 @@ class GoodsController extends Controller
     }
 
     public function newGoodSearch(String $type, String $inputText)
-    {   
+    { 
         return $this->goodService->searchAll($type,$inputText);  
     }
 
@@ -475,7 +475,7 @@ class GoodsController extends Controller
         'data.*.dealer_id'=>'nullable|exists:dealers,id|integer',
         'data.*.received_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         'data.*.sale_price_per_unit'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
-        'data.*.expired_date'=>'nullable|date_format:Y-m-d|date',
+        'data.*.job_number'=>'required|string|max:20',
         'data.*.unit'=>'required|string|max:20',
         'data.*.quantity'=>'required|numeric|regex:/^\d{0,6}(\.\d{1,2})?$/',
         

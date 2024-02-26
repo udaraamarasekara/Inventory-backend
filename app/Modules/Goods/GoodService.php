@@ -7,15 +7,16 @@ use App\Modules\GoodDetails\GoodDetailService;
 use App\Modules\Goods\GoodRepositoryInterface;
 use App\Modules\PromisedPayments\PromisedPaymentService;
 use Illuminate\Support\Facades\DB;
+use App\Modules\Users\UserRepositoryInterface;
 use App\Modules\Stocks\StockService;
+
 
 class GoodService 
 {
 
     public function __construct(protected GoodRepositoryInterface $goodRepository,protected StockService $stockService,
     protected DealService $dealService, protected PromisedPaymentService $promisedPaymentService,
-    protected GoodDetailService $goodDetailService
-    )
+    protected GoodDetailService $goodDetailService, protected UserRepositoryInterface $userRepository)
     {
     }
 
@@ -56,6 +57,8 @@ class GoodService
                 DB::beginTransaction();
                 $data['dealer_id']=2;
                 $data['deal_id']=$deal_group_id;
+                $data['stock_id']=$this->goodRepository->getDealGroupId()+1;
+                $data['part_id']=$this->goodRepository->getDealGroupId()+1;
                 $goodRow=   new GoodResource( $this->goodRepository->create($data)); 
                 if($dataArray['deal_type']=='income')
                 {
@@ -77,7 +80,7 @@ class GoodService
               return $e;
             }
             }
-            $deal_id= $this->dealService->create(['dealable_type'=>'App\Models\Good','dealable_id'=>$goodRowArry['deal_id'],'deal_type'=>$dataArray['deal_type'],'amount'=>$dataArray['amount']])->id;
+            $deal_id= $this->dealService->create(['dealable_type'=>'App\Models\Good','dealable_id'=>$goodRowArry['deal_id'],'deal_type'=>$dataArray['deal_type'],'amount'=>$dataArray['amount'],'relevent_user'=>auth()->user()->id])->id;
             if(isset($dataArray['promised_amount']) && isset($dataArray['promised_deadline']))
             {
             $promisedPayment=['amount'=>$dataArray['promised_amount'],'deadline'=>$dataArray['promised_deadline'],'deal_id'=>$deal_id]; 
@@ -106,8 +109,8 @@ class GoodService
               $this->stockService->update($good['item_code'],$good['quantity'],$quantityToRemove);
               if(isset($data['promised_amount']) && isset($data['promised_deadline']))
               {
-               $promisedPayment=['amount'=>$data['promised_amount'],'deadline'=>$data['promised_deadline'],'deal_group_id'=>$dealId]; 
-               $this->promisedPaymentService->updateByDealGroupId($promisedPayment);  
+               $promisedPayment=['amount'=>$data['promised_amount'],'deadline'=>$data['promised_deadline'],'deal_id'=>$dealId]; 
+               $this->promisedPaymentService->updateByDealId($promisedPayment);  
               }
             }else
             {
@@ -289,13 +292,20 @@ class GoodService
 
     public function searchAll(String $type, String $inputText)
     {
-      if($type=='brand'||$type=='model'||$type=='category')
+      if($type=='brand'||$type=='modal'||$type=='category')
       {
        return $this->goodDetailService->searchSpecificGoodDetail($type,$inputText);
       }
       else if($type=='customer')
       {
-         
+        return $this->userRepository->searchCustomer($inputText); 
+      }
+      elseif($type=='supplier')
+      {
+        return $this->userRepository->searchSupplier($inputText); 
+      }
+      else{
+       return $this->goodRepository->searchColumn($type,$inputText);
       }
     }
     public function getDealGroupId()

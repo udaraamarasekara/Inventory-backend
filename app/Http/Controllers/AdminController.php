@@ -90,6 +90,11 @@ class AdminController extends Controller
       
     }
 
+    public function getProfessions()
+    {
+      return $this->userService->getProfessions();
+    }
+
     /**
      * Remove the specified resource from storage.
      */

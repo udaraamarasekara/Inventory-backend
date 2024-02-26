@@ -109,4 +109,9 @@ class UserController extends Controller
 
   }
 
+  public function peopleData()
+  {
+    return $this->userService->peopleData();
+  }
+
 }
